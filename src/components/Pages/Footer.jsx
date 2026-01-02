@@ -113,7 +113,7 @@ export default function Footer() {
             </div>
 
             <p className="text-sm text-gray-300 leading-relaxed mb-5 max-w-xs">
-              Pshpako2 Second Floor, 11, Aadi Parishar, Bagsewaniya, Sant Ashram Nagar, Bhel Sangam Colony, Face2, Bhopal Madhya Pradesh
+              Pushpako2 Second Floor, 11, Aadi Parishar, Bagsewaniya, Sant Ashram Nagar, Bhel Sangam Colony, Face2, Bhopal Madhya Pradesh
             </p>
 
             <div className="space-y-2">

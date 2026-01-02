@@ -14,8 +14,17 @@ export default function Hero() {
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden text-white bg-[#060B18]"
     >
       {/* Squares Component */}
-      <div className="absolute w-full h-full">
-        <Squares />
+      <div className="absolute w-4/5 h-4/5">
+        {/* <Squares /> */}
+        {/* <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full scale-75" /> */}
+
+        <img
+          src={'/hero-drone-video.gif'}
+          alt="Pushpak O2 Hydrogen-Electric Aircraft in Flight"
+          className="w-full h-auto rounded-2xl shadow-2xl"
+        />
+        {/* <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/50 via-background/50 to-transparent rounded-b-2xl" /> */}
+
       </div>
       {/* Background Gradient */}
       {/* <div className="absolute inset-0 -z-20 bg-gradient-to-b from-[#0f0f0f] via-[#1a1a1a] to-[#111111]" /> */}
@@ -126,7 +135,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Hero Aircraft Image */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
@@ -143,25 +152,9 @@ export default function Hero() {
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/50 via-background/50 to-transparent rounded-b-2xl" />
             </div>
           </div>
-        </motion.div>
-
-        {/* Scroll Indicator */}
-        {/* <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="absolute bottom-1 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <span className="text-xs text-muted-foreground tracking-wider uppercase">
-            Scroll to explore
-          </span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <ChevronDown className="w-5 h-5 text-muted-foreground" />
-          </motion.div>
         </motion.div> */}
+
+
       </div>
     </section>
   )

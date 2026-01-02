@@ -101,6 +101,7 @@ export default function AboutPage() {
                             height={600}
                             className="object-cover w-full h-full"
                             priority
+                            unoptimized
                         />
                     </motion.div>
                 </div>
