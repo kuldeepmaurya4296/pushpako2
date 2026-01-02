@@ -44,7 +44,7 @@ const technologies = [
 
 export default function TechnologyPage() {
     return (
-        <main className="">
+        <main className="max-w-screen overflow-x-hidden">
             {/* ================= HERO ================= */}
             <section className="relative min-h-screen flex items-center justify-center bg-background-darker">
                 <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background-darker to-background-darker" />

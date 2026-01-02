@@ -29,7 +29,7 @@ const stats = [
   },
   {
     icon: Award,
-    value: 5,
+    value: 8,
     suffix: " yrs",
     label: "R&D Excellence",
     color: "green",
