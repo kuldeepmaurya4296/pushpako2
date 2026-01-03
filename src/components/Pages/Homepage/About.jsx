@@ -30,7 +30,7 @@ const highlights = [
 
 const About = () => {
   return (
-    <section id="about" className="py-24">
+    <section id="about" className="py-24 overflow-x-hidden">
       <div className="container mx-auto px-6 lg:px-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Image */}
@@ -57,7 +57,7 @@ const About = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute -bottom-8 -right-4 lg:right-8 bg-card border border-border rounded-xl p-5 shadow-xl"
+              className="absolute -bottom-8 right-4 lg:-right-8 bg-card border border-border rounded-xl p-5 shadow-xl w-64 max-w-[calc(100vw-2rem)] lg:max-w-none"
             >
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center">
@@ -114,7 +114,7 @@ const About = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-white text-sm">{item.label}</p>
-                      <p className="text-xs text-muted-white mt-0.5">{item.description}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
                     </div>
                   </motion.div>
                 );

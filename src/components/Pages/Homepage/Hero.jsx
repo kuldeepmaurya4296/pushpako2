@@ -129,8 +129,10 @@ export default function Hero() {
 
 
           <Button variant="heroOutline" size="xl" className="group cursor-pointer p-2 px-4 border text-white w-4/5 md:w-1/5 text-xl py-2">
+            <Link href="/sign-in" className="flex items-center justify-center space-x-3">
             <TrendingUp className="w-5 h-5" />
             Investor Portal
+            </Link>
           </Button>
         </motion.div>
 
