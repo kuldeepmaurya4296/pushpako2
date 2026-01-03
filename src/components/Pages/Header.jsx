@@ -11,7 +11,7 @@ const navItems = [
   { label: "Home", href: "/" },
   { label: "Technology", href: "/technologies" },
   { label: "About US", href: "/about-us" },
-  { label: "Investors", href: "/investors", badge: "Series A" },
+  { label: "Investors", href: "/dashboards/investors/1", badge: "Series A" },
   { label: "Contact Us", href: "/contact-us" },
   { label: "Services", href: "/services" },
   { label: "Our Team", href: "/our-team" },

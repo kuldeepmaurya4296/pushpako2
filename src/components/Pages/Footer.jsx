@@ -28,7 +28,7 @@ const footerSections = [
     links: [
       { name: "FAQ", href: "/support-faq" },
       { name: "Support", href: "/support-faq" },
-      { name: "Blog", href: "/blog" },
+      { name: "Blog", href: "/blogs" },
     ],
   },
 ]
