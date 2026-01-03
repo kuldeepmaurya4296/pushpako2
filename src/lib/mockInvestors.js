@@ -19,5 +19,14 @@ export const mockInvestors = [
     joinDate: '2023-03-20',
     profilePicture: '/public/next.svg', // placeholder
   },
-  // Add more as needed
+  {
+    id: '3',
+    name: 'Alice Johnson',
+    email: 'alice.johnson@example.com',
+    investmentAmount: 300000,
+    currentValue: 330000,
+    roi: 10,
+    joinDate: '2023-05-10',
+    profilePicture: '/public/next.svg', // placeholder  
+  }
 ];
