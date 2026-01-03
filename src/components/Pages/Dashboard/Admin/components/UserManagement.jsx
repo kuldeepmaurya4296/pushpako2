@@ -1,12 +1,89 @@
 import { mockUsers } from '@/lib/mockUsers';
 import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import AddEditUserDialog from './AddEditUserDialog';
+import DeleteUserDialog from './DeleteUserDialog';
+import ViewUserDialog from './ViewUserDialog';
 
 export default function UserManagement() {
+  const [users, setUsers] = useState(mockUsers);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    type: 'investor',
+    source: '',
+    status: 'new',
+  });
+
+  const handleAddUser = () => {
+    setFormData({
+      name: '',
+      email: '',
+      type: 'investor',
+      source: '',
+      status: 'new',
+    });
+    setIsAddDialogOpen(true);
+  };
+
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      type: user.type,
+      source: user.source,
+      status: user.status,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteUser = (user) => {
+    setSelectedUser(user);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleSubmitAdd = () => {
+    const newUser = {
+      ...formData,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+    };
+    setUsers([...users, newUser]);
+    setIsAddDialogOpen(false);
+  };
+
+  const handleSubmitEdit = () => {
+    const updatedUser = {
+      ...selectedUser,
+      ...formData,
+    };
+    setUsers(users.map(user => user.id === selectedUser.id ? updatedUser : user));
+    setIsEditDialogOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleConfirmDelete = () => {
+    setUsers(users.filter(user => user.id !== selectedUser.id));
+    setIsDeleteDialogOpen(false);
+    setSelectedUser(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">User Management</h2>
-        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2" onClick={handleAddUser}>
           <Plus className="w-4 h-4" />
           Add New User
         </button>
@@ -26,7 +103,7 @@ export default function UserManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
-              {mockUsers.map((user) => (
+              {users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-750">
                   <td className="px-6 py-4">
                     <div>
@@ -48,13 +125,13 @@ export default function UserManagement() {
                   <td className="px-6 py-4 text-sm text-gray-300">{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <button className="text-blue-400 hover:text-blue-300 transition-colors">
+                      <button className="text-blue-400 hover:text-blue-300 transition-colors" onClick={() => handleViewUser(user)}>
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors">
+                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors" onClick={() => handleEditUser(user)}>
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button className="text-red-400 hover:text-red-300 transition-colors">
+                      <button className="text-red-400 hover:text-red-300 transition-colors" onClick={() => handleDeleteUser(user)}>
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -70,21 +147,52 @@ export default function UserManagement() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total Users</h3>
-          <p className="text-3xl font-bold text-blue-400">{mockUsers.length}</p>
+          <p className="text-3xl font-bold text-blue-400">{users.length}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">New Users</h3>
-          <p className="text-3xl font-bold text-green-400">{mockUsers.filter(u => u.status === 'new').length}</p>
+          <p className="text-3xl font-bold text-green-400">{users.filter(u => u.status === 'new').length}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Qualified Leads</h3>
-          <p className="text-3xl font-bold text-yellow-400">{mockUsers.filter(u => u.status === 'qualified').length}</p>
+          <p className="text-3xl font-bold text-yellow-400">{users.filter(u => u.status === 'qualified').length}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Converted</h3>
-          <p className="text-3xl font-bold text-purple-400">{mockUsers.filter(u => u.status === 'converted').length}</p>
+          <p className="text-3xl font-bold text-purple-400">{users.filter(u => u.status === 'converted').length}</p>
         </div>
       </div>
+
+      <AddEditUserDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onSubmit={handleSubmitAdd}
+        formData={formData}
+        setFormData={setFormData}
+        isEdit={false}
+      />
+
+      <AddEditUserDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        onSubmit={handleSubmitEdit}
+        formData={formData}
+        setFormData={setFormData}
+        isEdit={true}
+      />
+
+      <DeleteUserDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleConfirmDelete}
+        userName={selectedUser?.name}
+      />
+
+      <ViewUserDialog
+        isOpen={isViewDialogOpen}
+        onClose={() => setIsViewDialogOpen(false)}
+        user={selectedUser}
+      />
     </div>
   );
 }

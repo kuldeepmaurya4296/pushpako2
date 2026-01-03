@@ -1,0 +1,79 @@
+import { X } from 'lucide-react';
+
+export default function AddEditTechnologyDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50 py-10">
+      <div className="bg-gray-800 p-6 rounded-lg w-full max-w-4xl max-h-full overflow-y-auto hide-scrollbar">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">{isEdit ? 'Edit Technology' : 'Add New Technology'}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full p-2 bg-gray-700 rounded"
+              required
+            />
+            <textarea
+              placeholder="Description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full p-2 bg-gray-700 rounded"
+              rows="3"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Category"
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className="w-full p-2 bg-gray-700 rounded"
+            />
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full p-2 bg-gray-700 rounded"
+            >
+              <option value="active">Active</option>
+              <option value="development">Development</option>
+              <option value="deprecated">Deprecated</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Version"
+              value={formData.version}
+              onChange={(e) => setFormData({ ...formData, version: e.target.value })}
+              className="w-full p-2 bg-gray-700 rounded"
+            />
+            <input
+              type="number"
+              placeholder="Downloads"
+              value={formData.downloads}
+              onChange={(e) => setFormData({ ...formData, downloads: parseInt(e.target.value) || 0 })}
+              className="w-full p-2 bg-gray-700 rounded"
+            />
+            <input
+              type="url"
+              placeholder="Featured Image URL"
+              value={formData.featuredImage}
+              onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
+              className="w-full p-2 bg-gray-700 rounded"
+            />
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">{isEdit ? 'Update Technology' : 'Add Technology'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

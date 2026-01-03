@@ -1,12 +1,39 @@
 import { mockTechnologies } from '@/lib/mockTechnologies';
 import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import AddEditTechnologyDialog from './AddEditTechnologyDialog';
+import DeleteTechnologyDialog from './DeleteTechnologyDialog';
+import ViewTechnologyDialog from './ViewTechnologyDialog';
 
 export default function TechnologyManagement() {
+  const [dialogState, setDialogState] = useState({
+    add: false,
+    edit: false,
+    view: false,
+    delete: false,
+  });
+  const [selectedTechnology, setSelectedTechnology] = useState(null);
+
+  const handleOpenDialog = (type, technology = null) => {
+    setSelectedTechnology(technology);
+    setDialogState(prev => ({ ...prev, [type]: true }));
+  };
+
+  const handleCloseDialog = () => {
+    setDialogState({
+      add: false,
+      edit: false,
+      view: false,
+      delete: false,
+    });
+    setSelectedTechnology(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Technology Management</h2>
-        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+        <button onClick={() => handleOpenDialog('add')} className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
           <Plus className="w-4 h-4" />
           Add New Technology
         </button>
@@ -50,13 +77,13 @@ export default function TechnologyManagement() {
                   <td className="px-6 py-4 text-sm text-gray-300">{tech.downloads}</td>
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <button className="text-blue-400 hover:text-blue-300 transition-colors">
+                      <button onClick={() => handleOpenDialog('view', tech)} className="text-blue-400 hover:text-blue-300 transition-colors">
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors">
+                      <button onClick={() => handleOpenDialog('edit', tech)} className="text-yellow-400 hover:text-yellow-300 transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button className="text-red-400 hover:text-red-300 transition-colors">
+                      <button onClick={() => handleOpenDialog('delete', tech)} className="text-red-400 hover:text-red-300 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
