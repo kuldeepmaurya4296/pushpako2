@@ -4,8 +4,8 @@ export default function EditInvestorDialog({ isOpen, onClose, onSubmit, formData
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg w-full max-w-md">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 py-10">
+      <div className="bg-gray-800 p-6 rounded-lg w-full max-w-3xl max-h-full overflow-y-auto hide-scrollbar">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold">Edit Investor</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
