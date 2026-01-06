@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 
 const SOCIAL_PLATFORMS = [
@@ -13,25 +13,18 @@ const SOCIAL_PLATFORMS = [
 ];
 
 function AddEditFooterCTADialog({ isOpen, onClose, onSave, initialData = null }) {
-  const [formData, setFormData] = useState({
-    title: '',
-    subtitle: '',
-    primaryButton: '',
-    secondaryButton: ''
-  });
-
-  useEffect(() => {
+  const [formData, setFormData] = useState(() => {
     if (initialData) {
-      setFormData(initialData);
+      return initialData;
     } else {
-      setFormData({
+      return {
         title: '',
         subtitle: '',
         primaryButton: '',
         secondaryButton: ''
-      });
+      };
     }
-  }, [initialData, isOpen]);
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -135,23 +128,17 @@ function AddEditFooterCTADialog({ isOpen, onClose, onSave, initialData = null })
 }
 
 function AddEditFooterBrandDialog({ isOpen, onClose, onSave, initialData = null }) {
-  const [formData, setFormData] = useState({
-    description: '',
-    email: '',
-    phone: ''
-  });
-
-  useEffect(() => {
+  const [formData, setFormData] = useState(() => {
     if (initialData) {
-      setFormData(initialData);
+      return initialData;
     } else {
-      setFormData({
+      return {
         description: '',
         email: '',
         phone: ''
-      });
+      };
     }
-  }, [initialData, isOpen]);
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -242,24 +229,19 @@ function AddEditFooterBrandDialog({ isOpen, onClose, onSave, initialData = null 
 }
 
 function AddEditFooterSectionDialog({ isOpen, onClose, onSave, initialData = null }) {
-  const [formData, setFormData] = useState({
-    title: '',
-    links: [{ name: '', href: '' }]
-  });
-
-  useEffect(() => {
+  const [formData, setFormData] = useState(() => {
     if (initialData) {
-      setFormData({
+      return {
         title: initialData.title || '',
         links: initialData.links && initialData.links.length > 0 ? [...initialData.links] : [{ name: '', href: '' }]
-      });
+      };
     } else {
-      setFormData({
+      return {
         title: '',
         links: [{ name: '', href: '' }]
-      });
+      };
     }
-  }, [initialData, isOpen]);
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -405,27 +387,21 @@ function AddEditFooterSectionDialog({ isOpen, onClose, onSave, initialData = nul
 }
 
 function AddEditFooterSocialLinkDialog({ isOpen, onClose, onSave, initialData = null }) {
-  const [formData, setFormData] = useState({
-    platform: '',
-    url: '',
-    icon: ''
-  });
-
-  useEffect(() => {
+  const [formData, setFormData] = useState(() => {
     if (initialData) {
-      setFormData({
+      return {
         platform: initialData.platform || '',
         url: initialData.url || '',
         icon: initialData.icon || ''
-      });
+      };
     } else {
-      setFormData({
+      return {
         platform: '',
         url: '',
         icon: ''
-      });
+      };
     }
-  }, [initialData, isOpen]);
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -532,23 +508,17 @@ function AddEditFooterSocialLinkDialog({ isOpen, onClose, onSave, initialData = 
 }
 
 function AddEditFooterBottomBarDialog({ isOpen, onClose, onSave, initialData = null }) {
-  const [formData, setFormData] = useState({
-    copyright: '',
-    privacyLink: '',
-    termsLink: ''
-  });
-
-  useEffect(() => {
+  const [formData, setFormData] = useState(() => {
     if (initialData) {
-      setFormData(initialData);
+      return initialData;
     } else {
-      setFormData({
+      return {
         copyright: '',
         privacyLink: '',
         termsLink: ''
-      });
+      };
     }
-  }, [initialData, isOpen]);
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
