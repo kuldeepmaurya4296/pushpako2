@@ -72,7 +72,7 @@ export default function BlogCard({ blog, index }) {
       </Link>
 
       <div className="p-6">
-        <Link href={`/blogs/${blog.id}`}>
+        <Link href={`/blogs/${blog.slug}`}>
           <motion.h3
             className="text-lg md:text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors line-clamp-2"
             whileHover={{ scale: 1.02 }}
@@ -103,7 +103,7 @@ export default function BlogCard({ blog, index }) {
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
-              <span>{formatDate(blog.publishedAt)}</span>
+              <span>{formatDate(blog.createdAt)}</span>
             </div>
           </div>
         </motion.div>

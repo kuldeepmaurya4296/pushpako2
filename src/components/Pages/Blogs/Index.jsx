@@ -19,7 +19,7 @@ export default function Blogs() {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/blogs');
+        const response = await fetch('/api/blogs?published=true');
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }
@@ -145,7 +145,7 @@ export default function Blogs() {
                   transition={{ duration: 0.5 }}
                 >
                   {filteredBlogs.map((blog, index) => (
-                    <BlogCard key={blog.id} blog={blog} index={index} />
+                    <BlogCard key={blog._id} blog={blog} index={index} />
                   ))}
                 </motion.div>
               ) : (

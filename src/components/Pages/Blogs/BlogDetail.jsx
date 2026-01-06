@@ -113,7 +113,7 @@ export default function BlogDetail({ blog }) {
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{formatDate(blog.publishedAt)}</span>
+              <span>{formatDate(blog.createdAt)}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
@@ -203,7 +203,7 @@ export default function BlogDetail({ blog }) {
           />
 
           {/* Comments Section */}
-          <CommentsSection blogId={blog.id} />
+          <CommentsSection blogId={blog._id} />
         </div>
       </article>
     </div>

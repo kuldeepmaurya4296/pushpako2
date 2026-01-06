@@ -9,10 +9,10 @@ export async function GET(request, { params }) {
     const { id } = await params
 
     // Try to find by slug first, then by ID if it's a valid ObjectId
-    let blog = await Blog.findOne({ slug: id })
+    let blog = await Blog.findOne({ slug: id, isPublished: true })
 
     if (!blog && /^[0-9a-fA-F]{24}$/.test(id)) {
-      blog = await Blog.findById(id)
+      blog = await Blog.findOne({ _id: id, isPublished: true })
     }
 
     if (!blog) {

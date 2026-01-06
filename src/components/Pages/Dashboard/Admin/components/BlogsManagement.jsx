@@ -3,6 +3,7 @@ import { Edit, Eye, Trash2, Plus, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { AddEditBlogDialog } from './BlogOperations';
 import { DeleteDialog } from '@/components/ui/DeleteDialog';
+import toast from 'react-hot-toast';
 
 export default function BlogsManagement() {
   const [blogs, setBlogs] = useState([]);
@@ -113,9 +114,10 @@ export default function BlogsManagement() {
 
       await fetchBlogs(); // Refresh the list
       setIsAddDialogOpen(false);
+      toast.success('Blog created successfully');
     } catch (error) {
       console.error('Error creating blog:', error);
-      // You might want to show an error message to the user here
+      toast.error('Failed to create blog');
     }
   };
 
@@ -136,9 +138,10 @@ export default function BlogsManagement() {
       await fetchBlogs(); // Refresh the list
       setIsEditDialogOpen(false);
       setSelectedBlog(null);
+      toast.success('Blog updated successfully');
     } catch (error) {
       console.error('Error updating blog:', error);
-      // You might want to show an error message to the user here
+      toast.error('Failed to update blog');
     }
   };
 
@@ -155,9 +158,10 @@ export default function BlogsManagement() {
       await fetchBlogs(); // Refresh the list
       setIsDeleteDialogOpen(false);
       setSelectedBlog(null);
+      toast.success('Blog deleted successfully');
     } catch (error) {
       console.error('Error deleting blog:', error);
-      // You might want to show an error message to the user here
+      toast.error('Failed to delete blog');
     }
   };
 
