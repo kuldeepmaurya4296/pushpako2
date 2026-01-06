@@ -1,34 +1,77 @@
 
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { mockBlogs, blogCategories, getBlogsByCategory, getRecentBlogs, getPopularBlogs } from '@/lib/mockBlogs';
 import BlogCard from './BlogCard';
 import SearchBar from './SearchBar';
 import CategoryFilter from './CategoryFilter';
 import RecentBlogs from './RecentBlogs';
 
 export default function Blogs() {
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const filteredBlogs = useMemo(() => {
-    let blogs = getBlogsByCategory(activeCategory);
+  // Fetch blogs from API
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/blogs');
+        if (!response.ok) {
+          throw new Error('Failed to fetch blogs');
+        }
+        const data = await response.json();
+        setBlogs(data.blogs || []);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching blogs:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchBlogs();
+  }, []);
+
+  // Define categories (you might want to fetch these from API too)
+  const blogCategories = ['All', 'Technology', 'Industry', 'Safety', 'Business', 'Sustainability'];
+
+  const filteredBlogs = useMemo(() => {
+    let filtered = blogs;
+
+    // Filter by category
+    if (activeCategory !== 'All') {
+      filtered = filtered.filter(blog => blog.category === activeCategory);
+    }
+
+    // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      blogs = blogs.filter(blog =>
+      filtered = filtered.filter(blog =>
         blog.title.toLowerCase().includes(query) ||
         blog.excerpt.toLowerCase().includes(query) ||
-        blog.tags.some(tag => tag.toLowerCase().includes(query))
+        (blog.tags && blog.tags.some(tag => tag.toLowerCase().includes(query)))
       );
     }
 
-    return blogs;
-  }, [searchQuery, activeCategory]);
+    return filtered;
+  }, [blogs, searchQuery, activeCategory]);
 
-  const recentBlogs = useMemo(() => getRecentBlogs(3), []);
-  const popularBlogs = useMemo(() => getPopularBlogs(3), []);
+  const recentBlogs = useMemo(() => {
+    return [...blogs]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 3);
+  }, [blogs]);
+
+  const popularBlogs = useMemo(() => {
+    return [...blogs]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 3);
+  }, [blogs]);
 
   return (
     <div className="min-h-screen bg-[#060B18] text-white">
@@ -84,7 +127,17 @@ export default function Blogs() {
           <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Blog Grid */}
             <div className="lg:col-span-3">
-              {filteredBlogs.length > 0 ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+                  <span className="ml-3 text-gray-300">Loading blogs...</span>
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <h3 className="text-2xl font-bold text-red-400 mb-4">Error loading blogs</h3>
+                  <p className="text-gray-500">{error}</p>
+                </div>
+              ) : filteredBlogs.length > 0 ? (
                 <motion.div
                   className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
                   initial={{ opacity: 0 }}

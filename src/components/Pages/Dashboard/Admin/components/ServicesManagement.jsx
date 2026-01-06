@@ -1,17 +1,40 @@
-import { mockServices } from '@/lib/mockServices';
-import { mockAnalytics } from '@/lib/mockAnalytics';
-import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Plus, Eye, Edit, Trash2, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { AddEditServicesDialog, ViewServicesDialog } from './ServiceOperations';
 import { DeleteDialog } from '@/components/ui/DeleteDialog';
 
 export default function ServicesManagement() {
-  const [services, setServices] = useState(mockServices);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+
+  // Fetch services from API
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/services');
+      if (!response.ok) {
+        throw new Error('Failed to fetch services');
+      }
+      const data = await response.json();
+      setServices(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching services:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -62,38 +85,99 @@ export default function ServicesManagement() {
     setIsViewDialogOpen(true);
   };
 
-  const handleSubmitAdd = () => {
-    const newService = {
-      ...formData,
-      id: Date.now().toString(),
-      featuredImage: '',
-      images: [],
-      pricing: {},
-      testimonials: [],
-      specifications: {},
-      bookingUrl: '',
-      inquirySystem: 'integrated',
-      order: services.length + 1,
-    };
-    setServices([...services, newService]);
-    setIsAddDialogOpen(false);
+  const handleSubmitAdd = async () => {
+    try {
+      const response = await fetch('/api/services', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          featuredImage: '',
+          images: [],
+          pricing: {},
+          testimonials: [],
+          specifications: {},
+          bookingUrl: '',
+          inquirySystem: 'integrated',
+          order: services.length + 1,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create service');
+      }
+
+      await fetchServices(); // Refresh the list
+      setIsAddDialogOpen(false);
+    } catch (error) {
+      console.error('Error creating service:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
-  const handleSubmitEdit = () => {
-    const updatedService = {
-      ...selectedService,
-      ...formData,
-    };
-    setServices(services.map(service => service.id === selectedService.id ? updatedService : service));
-    setIsEditDialogOpen(false);
-    setSelectedService(null);
+  const handleSubmitEdit = async () => {
+    try {
+      const response = await fetch(`/api/services/${selectedService._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update service');
+      }
+
+      await fetchServices(); // Refresh the list
+      setIsEditDialogOpen(false);
+      setSelectedService(null);
+    } catch (error) {
+      console.error('Error updating service:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
-  const handleConfirmDelete = () => {
-    setServices(services.filter(service => service.id !== selectedService.id));
-    setIsDeleteDialogOpen(false);
-    setSelectedService(null);
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`/api/services/${selectedService._id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete service');
+      }
+
+      await fetchServices(); // Refresh the list
+      setIsDeleteDialogOpen(false);
+      setSelectedService(null);
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      // You might want to show an error message to the user here
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+        <span className="ml-2 text-gray-300">Loading services...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-900 border border-red-700 rounded-lg p-4">
+          <h3 className="text-red-400 font-semibold">Error loading services</h3>
+          <p className="text-red-300 mt-1">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -120,7 +204,7 @@ export default function ServicesManagement() {
             </thead>
             <tbody className="divide-y divide-gray-700">
               {services.map((service) => (
-                <tr key={service.id} className="hover:bg-gray-750">
+                <tr key={service._id} className="hover:bg-gray-750">
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="text-sm font-medium text-white">{service.title}</div>
@@ -137,10 +221,11 @@ export default function ServicesManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-300">
-                    {service.pricing.standard ? `$${service.pricing.standard.price.toLocaleString()}` : 'Custom'}
+                    {service.pricing?.standard ? `$${service.pricing.standard.price?.toLocaleString() || 'N/A'}` : 'Custom'}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-300">
-                    {mockAnalytics.content.serviceInquiries.find(s => s.service === service.title)?.inquiries || 0}
+                    {/* Placeholder for inquiries - you might want to add this to your API */}
+                    0
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center gap-2">
@@ -174,7 +259,7 @@ export default function ServicesManagement() {
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total Inquiries</h3>
-          <p className="text-3xl font-bold text-yellow-400">{services.reduce((sum, s) => sum + (mockAnalytics.content.serviceInquiries.find(si => si.service === s.title)?.inquiries || 0), 0)}</p>
+          <p className="text-3xl font-bold text-yellow-400">0</p> {/* Placeholder - you can add inquiry tracking later */}
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Popular Services</h3>

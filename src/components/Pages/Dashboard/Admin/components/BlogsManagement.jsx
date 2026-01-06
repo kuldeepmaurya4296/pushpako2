@@ -1,16 +1,40 @@
-import { mockBlogs } from '@/lib/mockBlogs';
 import Link from 'next/link';
-import { Edit, Eye, Trash2, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { Edit, Eye, Trash2, Plus, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { AddEditBlogDialog } from './BlogOperations';
 import { DeleteDialog } from '@/components/ui/DeleteDialog';
 
 export default function BlogsManagement() {
-  const [blogs, setBlogs] = useState(mockBlogs);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
+
+  // Fetch blogs from API
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/blogs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch blogs');
+      }
+      const data = await response.json();
+      setBlogs(data.blogs || []);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching blogs:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -65,39 +89,97 @@ export default function BlogsManagement() {
     setIsDeleteDialogOpen(true);
   };
 
-  const handleSubmitAdd = () => {
-    const newBlog = {
-      ...formData,
-      id: Date.now().toString(),
-      authorId: 'admin',
-      publishedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      images: [],
-      videos: [],
-      views: 0,
-      likes: 0,
-      comments: [],
-    };
-    setBlogs([...blogs, newBlog]);
-    setIsAddDialogOpen(false);
+  const handleSubmitAdd = async () => {
+    try {
+      const response = await fetch('/api/blogs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          authorId: 'admin',
+          images: [],
+          videos: [],
+          views: 0,
+          likes: 0,
+          comments: [],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create blog');
+      }
+
+      await fetchBlogs(); // Refresh the list
+      setIsAddDialogOpen(false);
+    } catch (error) {
+      console.error('Error creating blog:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
-  const handleSubmitEdit = () => {
-    const updatedBlog = {
-      ...selectedBlog,
-      ...formData,
-      updatedAt: new Date().toISOString(),
-    };
-    setBlogs(blogs.map(blog => blog.id === selectedBlog.id ? updatedBlog : blog));
-    setIsEditDialogOpen(false);
-    setSelectedBlog(null);
+  const handleSubmitEdit = async () => {
+    try {
+      const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update blog');
+      }
+
+      await fetchBlogs(); // Refresh the list
+      setIsEditDialogOpen(false);
+      setSelectedBlog(null);
+    } catch (error) {
+      console.error('Error updating blog:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
-  const handleConfirmDelete = () => {
-    setBlogs(blogs.filter(blog => blog.id !== selectedBlog.id));
-    setIsDeleteDialogOpen(false);
-    setSelectedBlog(null);
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete blog');
+      }
+
+      await fetchBlogs(); // Refresh the list
+      setIsDeleteDialogOpen(false);
+      setSelectedBlog(null);
+    } catch (error) {
+      console.error('Error deleting blog:', error);
+      // You might want to show an error message to the user here
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+        <span className="ml-2 text-gray-300">Loading blogs...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-900 border border-red-700 rounded-lg p-4">
+          <h3 className="text-red-400 font-semibold">Error loading blogs</h3>
+          <p className="text-red-300 mt-1">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -124,13 +206,13 @@ export default function BlogsManagement() {
             </thead>
             <tbody className="divide-y divide-gray-700">
               {blogs.map((blog) => (
-                <tr key={blog.id} className="hover:bg-gray-750">
+                <tr key={blog._id} className="hover:bg-gray-750">
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <img className="h-10 w-10 rounded-lg object-cover" src={blog.featuredImage} alt={blog.title} />
                       <div className="ml-4">
                         <div className="text-sm font-medium text-white line-clamp-1">{blog.title}</div>
-                        <div className="text-sm text-gray-400">{new Date(blog.publishedAt).toLocaleDateString()}</div>
+                        <div className="text-sm text-gray-400">{new Date(blog.createdAt).toLocaleDateString()}</div>
                       </div>
                     </div>
                   </td>
@@ -147,7 +229,7 @@ export default function BlogsManagement() {
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/blogs/${blog.id}`}
+                        href={`/blogs/${blog.slug}`} target='_blank'
                         className="text-blue-400 hover:text-blue-300 transition-colors"
                       >
                         <Eye className="w-4 h-4" />
@@ -179,11 +261,11 @@ export default function BlogsManagement() {
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total Views</h3>
-          <p className="text-3xl font-bold text-yellow-400">{blogs.reduce((sum, b) => sum + b.views, 0)}</p>
+          <p className="text-3xl font-bold text-yellow-400">{blogs.reduce((sum, b) => sum + (b.views || 0), 0)}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total Comments</h3>
-          <p className="text-3xl font-bold text-purple-400">{blogs.reduce((sum, b) => sum + b.comments.length, 0)}</p>
+          <p className="text-3xl font-bold text-purple-400">{blogs.reduce((sum, b) => sum + (b.comments?.length || 0), 0)}</p>
         </div>
       </div>
 
