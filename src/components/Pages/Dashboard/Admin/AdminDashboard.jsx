@@ -104,6 +104,12 @@ export default function AdminDashboard() {
               About Us Management
             </button>
             <button
+              onClick={() => setActiveSubTab('footer')}
+              className={`px-3 py-1 text-sm rounded-lg ${activeSubTab === 'footer' ? 'bg-blue-600' : 'bg-gray-700'} hover:bg-blue-500 transition`}
+            >
+              Footer Us Management
+            </button>
+            <button
               onClick={() => setActiveSubTab('services')}
               className={`px-3 py-1 text-sm rounded-lg ${activeSubTab === 'services' ? 'bg-blue-600' : 'bg-gray-700'} hover:bg-blue-500 transition`}
             >

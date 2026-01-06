@@ -1,9 +1,8 @@
 import { mockUsers } from '@/lib/mockUsers';
 import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import AddEditUserDialog from './AddEditUserDialog';
-import DeleteUserDialog from './DeleteUserDialog';
-import ViewUserDialog from './ViewUserDialog';
+import { AddEditUserDialog, ViewUserDialog } from './UserOperations';
+import { DeleteDialog } from '@/components/ui/DeleteDialog';
 
 export default function UserManagement() {
   const [users, setUsers] = useState(mockUsers);
@@ -181,11 +180,13 @@ export default function UserManagement() {
         isEdit={true}
       />
 
-      <DeleteUserDialog
+      <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={handleConfirmDelete}
-        userName={selectedUser?.name}
+        title="Delete User"
+        itemName={selectedUser?.name}
+        itemType="user"
       />
 
       <ViewUserDialog

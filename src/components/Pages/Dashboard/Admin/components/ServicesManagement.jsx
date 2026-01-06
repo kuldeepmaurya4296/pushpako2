@@ -2,9 +2,8 @@ import { mockServices } from '@/lib/mockServices';
 import { mockAnalytics } from '@/lib/mockAnalytics';
 import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import AddEditServicesDialog from './AddEditServicesDialog';
-import DeleteServicesDialog from './DeleteServicesDialog';
-import ViewServicesDialog from './ViewServicesDialog';
+import { AddEditServicesDialog, ViewServicesDialog } from './ServiceOperations';
+import { DeleteDialog } from '@/components/ui/DeleteDialog';
 
 export default function ServicesManagement() {
   const [services, setServices] = useState(mockServices);
@@ -201,11 +200,13 @@ export default function ServicesManagement() {
         isEdit={true}
       />
 
-      <DeleteServicesDialog
+      <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={handleConfirmDelete}
-        serviceTitle={selectedService?.title}
+        title="Delete Service"
+        itemName={selectedService?.title}
+        itemType="service"
       />
 
       <ViewServicesDialog

@@ -2,8 +2,8 @@ import { mockBlogs } from '@/lib/mockBlogs';
 import Link from 'next/link';
 import { Edit, Eye, Trash2, Plus } from 'lucide-react';
 import { useState } from 'react';
-import AddEditBlogDialog from './AddEditBlogDialog';
-import DeleteBlogDialog from './DeleteBlogDialog';
+import { AddEditBlogDialog } from './BlogOperations';
+import { DeleteDialog } from '@/components/ui/DeleteDialog';
 
 export default function BlogsManagement() {
   const [blogs, setBlogs] = useState(mockBlogs);
@@ -205,11 +205,13 @@ export default function BlogsManagement() {
         isEdit={true}
       />
 
-      <DeleteBlogDialog
+      <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={handleConfirmDelete}
-        blogTitle={selectedBlog?.title}
+        title="Delete Blog"
+        itemName={selectedBlog?.title}
+        itemType="blog"
       />
     </div>
   );

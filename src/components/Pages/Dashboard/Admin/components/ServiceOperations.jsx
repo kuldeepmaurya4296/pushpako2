@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 
-export default function AddEditServicesDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
+export function AddEditServicesDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
   if (!isOpen) return null;
 
   return (
@@ -28,6 +28,7 @@ export default function AddEditServicesDialog({ isOpen, onClose, onSubmit, formD
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
               className="w-full p-2 bg-gray-700 rounded"
+              required
             />
             <textarea
               placeholder="Description"
@@ -44,6 +45,7 @@ export default function AddEditServicesDialog({ isOpen, onClose, onSubmit, formD
             >
               <option value="Products">Products</option>
               <option value="Services">Services</option>
+              <option value="Solutions">Solutions</option>
             </select>
             <select
               value={formData.status}
@@ -52,7 +54,7 @@ export default function AddEditServicesDialog({ isOpen, onClose, onSubmit, formD
             >
               <option value="active">Active</option>
               <option value="development">Development</option>
-              <option value="discontinued">Discontinued</option>
+              <option value="deprecated">Deprecated</option>
             </select>
             <input
               type="text"
@@ -61,12 +63,12 @@ export default function AddEditServicesDialog({ isOpen, onClose, onSubmit, formD
               onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
               className="w-full p-2 bg-gray-700 rounded"
             />
-            <textarea
-              placeholder="Features (one per line)"
-              value={formData.features.join('\n')}
-              onChange={(e) => setFormData({ ...formData, features: e.target.value.split('\n').map(f => f.trim()).filter(f => f) })}
+            <input
+              type="text"
+              placeholder="Features (comma separated)"
+              value={formData.features.join(', ')}
+              onChange={(e) => setFormData({ ...formData, features: e.target.value.split(',').map(f => f.trim()) })}
               className="w-full p-2 bg-gray-700 rounded"
-              rows="5"
             />
             <label className="flex items-center gap-2">
               <input
@@ -74,7 +76,7 @@ export default function AddEditServicesDialog({ isOpen, onClose, onSubmit, formD
                 checked={formData.isPopular}
                 onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
               />
-              Popular
+              Popular Service
             </label>
           </div>
           <div className="flex justify-end gap-2 mt-4">
@@ -82,6 +84,52 @@ export default function AddEditServicesDialog({ isOpen, onClose, onSubmit, formD
             <button type="submit" className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">{isEdit ? 'Update Service' : 'Add Service'}</button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+export function ViewServicesDialog({ isOpen, onClose, service }) {
+  if (!isOpen || !service) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50 py-10">
+      <div className="bg-gray-800 p-6 rounded-lg w-full max-w-4xl max-h-full overflow-y-auto hide-scrollbar">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">View Service</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Title</label>
+            <p className="mt-1 text-white">{service.title}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Description</label>
+            <p className="mt-1 text-white">{service.description}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Category</label>
+            <p className="mt-1 text-white">{service.category}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Status</label>
+            <p className="mt-1 text-white capitalize">{service.status}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Features</label>
+            <p className="mt-1 text-white">{service.features.join(', ')}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Popular</label>
+            <p className="mt-1 text-white">{service.isPopular ? 'Yes' : 'No'}</p>
+          </div>
+        </div>
+        <div className="flex justify-end mt-4">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Close</button>
+        </div>
       </div>
     </div>
   );

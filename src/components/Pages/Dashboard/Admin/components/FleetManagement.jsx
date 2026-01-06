@@ -1,9 +1,8 @@
 import { mockFleet } from '@/lib/mockFleet';
 import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import AddEditFleetDialog from './AddEditFleetDialog';
-import DeleteFleetDialog from './DeleteFleetDialog';
-import ViewFleetDialog from './ViewFleetDialog';
+import { AddEditFleetDialog, ViewFleetDialog } from './FleetOperations';
+import { DeleteDialog } from '@/components/ui/DeleteDialog';
 
 export default function FleetManagement() {
   const [fleet, setFleet] = useState(mockFleet);
@@ -181,11 +180,13 @@ export default function FleetManagement() {
         isEdit={true}
       />
 
-      <DeleteFleetDialog
+      <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={handleConfirmDelete}
-        aircraftName={selectedAircraft?.name}
+        title="Delete Aircraft"
+        itemName={selectedAircraft?.name}
+        itemType="aircraft"
       />
 
       <ViewFleetDialog

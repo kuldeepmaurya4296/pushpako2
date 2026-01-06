@@ -6,7 +6,7 @@ import InvestorsStats from '../components/InvestorsStats';
 import AddInvestorDialog from '../components/AddInvestorDialog';
 import EditInvestorDialog from '../components/EditInvestorDialog';
 import ViewInvestorDialog from '../components/ViewInvestorDialog';
-import DeleteInvestorDialog from '../components/DeleteInvestorDialog';
+import { DeleteDialog } from '@/components/ui/DeleteDialog';
 
 export default function InvestorsTab() {
   const [investors, setInvestors] = useState(mockInvestors);
@@ -144,11 +144,13 @@ export default function InvestorsTab() {
         investor={selectedInvestor}
       />
 
-      <DeleteInvestorDialog
+      <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onClose={closeDialogs}
         onConfirm={handleDeleteInvestor}
-        investor={selectedInvestor}
+        title="Delete Investor"
+        itemName={selectedInvestor?.name}
+        itemType="investor"
       />
     </div>
   );

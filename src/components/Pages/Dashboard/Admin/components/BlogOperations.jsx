@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 
-export default function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
+export function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
   if (!isOpen) return null;
 
   return (
