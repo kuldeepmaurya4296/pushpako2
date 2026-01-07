@@ -1,9 +1,20 @@
-import Technologies from "@/components/Pages/Technology/Index";
+import { connectDB } from "@/lib/db/connectDB";
+import Technology from "@/lib/models/Technology";
+import TechnologiesClient from "@/components/Pages/Technology/Index";
 
-export default function page() {
+export default async function page() {
+  let technologies = [];
+
+  try {
+    await connectDB();
+    technologies = await Technology.find({ status: 'active' }).sort({ createdAt: -1 });
+  } catch (error) {
+    console.error("Error fetching technologies:", error);
+  }
+
   return (
-    <div className="min-h-screen text-white bg-[#060B18]  ">
-      <Technologies/>
+    <div className="min-h-screen text-white bg-[#060B18]">
+      <TechnologiesClient technologies={technologies} />
     </div>
-  )
+  );
 }

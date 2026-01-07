@@ -1,55 +1,18 @@
 
 
-"use client"
+import { connectDB } from "@/lib/db/connectDB";
+import Roadmap from "@/lib/models/Roadmap";
 
-import { useState, useEffect } from "react"
+export default async function RoadmapPage() {
+  let roadmapData = [];
 
-export default function RoadmapClient() {
-    const [roadmapData, setRoadmapData] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
+  try {
+    await connectDB();
+    roadmapData = await Roadmap.find({}).sort({ order: 1 });
+  } catch (error) {
+    console.error("Error fetching roadmap:", error);
+  }
 
-    useEffect(() => {
-        const fetchRoadmap = async () => {
-            try {
-                setLoading(true)
-                const response = await fetch('/api/roadmap')
-                if (!response.ok) {
-                    throw new Error('Failed to fetch roadmap')
-                }
-                const data = await response.json()
-                setRoadmapData(data || [])
-                setError(null)
-            } catch (err) {
-                setError(err.message)
-                console.error('Error fetching roadmap:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchRoadmap()
-    }, [])
-
-    if (loading) {
-        return (
-            <section className="py-24 text-white min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <span className="ml-3 text-gray-300">Loading roadmap...</span>
-            </section>
-        )
-    }
-
-    if (error) {
-        return (
-            <section className="py-24 text-white min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-red-400 mb-4">Error loading roadmap</h2>
-                    <p className="text-gray-500">{error}</p>
-                </div>
-            </section>
-        )
-    }
   return (
     <section className="py-24 text-white">
       <div className="container mx-auto px-6 text-center">
@@ -75,5 +38,5 @@ export default function RoadmapClient() {
         )}
       </div>
     </section>
-  )
+  );
 }

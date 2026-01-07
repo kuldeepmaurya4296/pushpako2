@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import {
@@ -42,52 +41,7 @@ const processSteps = [
 /* ---------------------------------------------
    COMPONENT
 ---------------------------------------------- */
-export default function ServicesPage() {
-    const [servicesData, setServicesData] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                setLoading(true)
-                const response = await fetch('/api/services?status=active')
-                if (!response.ok) {
-                    throw new Error('Failed to fetch services')
-                }
-                const data = await response.json()
-                setServicesData(data || [])
-                setError(null)
-            } catch (err) {
-                setError(err.message)
-                console.error('Error fetching services:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchServices()
-    }, [])
-
-    if (loading) {
-        return (
-            <main className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <span className="ml-3 text-gray-300">Loading services...</span>
-            </main>
-        )
-    }
-
-    if (error) {
-        return (
-            <main className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-red-400 mb-4">Error loading services</h2>
-                    <p className="text-gray-500">{error}</p>
-                </div>
-            </main>
-        )
-    }
+export default function ServicesPage({ services: servicesData }) {
     return (
         <main className="">
 

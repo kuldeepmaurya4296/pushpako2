@@ -1,6 +1,6 @@
 
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import BlogCard from './BlogCard';
 import SearchBar from './SearchBar';
@@ -8,35 +8,10 @@ import CategoryFilter from './CategoryFilter';
 import RecentBlogs from './RecentBlogs';
 import NewsletterSignup from './NewsletterSignup';
 
-export default function Blogs() {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export default function BlogsClient({ blogs: initialBlogs }) {
+  const [blogs] = useState(initialBlogs || []);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-
-  // Fetch blogs from API
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/blogs?published=true');
-        if (!response.ok) {
-          throw new Error('Failed to fetch blogs');
-        }
-        const data = await response.json();
-        setBlogs(data.blogs || []);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        console.error('Error fetching blogs:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
 
   // Define categories (you might want to fetch these from API too)
   const blogCategories = ['All', 'Technology', 'Industry', 'Safety', 'Business', 'Sustainability'];
@@ -128,17 +103,7 @@ export default function Blogs() {
           <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Blog Grid */}
             <div className="lg:col-span-3">
-              {loading ? (
-                <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
-                  <span className="ml-3 text-gray-300">Loading blogs...</span>
-                </div>
-              ) : error ? (
-                <div className="text-center py-12">
-                  <h3 className="text-2xl font-bold text-red-400 mb-4">Error loading blogs</h3>
-                  <p className="text-gray-500">{error}</p>
-                </div>
-              ) : filteredBlogs.length > 0 ? (
+              {filteredBlogs.length > 0 ? (
                 <motion.div
                   className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
                   initial={{ opacity: 0 }}

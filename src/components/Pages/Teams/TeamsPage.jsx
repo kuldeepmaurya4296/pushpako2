@@ -1,6 +1,5 @@
 
 "use client"
-import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 
@@ -10,52 +9,7 @@ const teamData = {
     "A multidisciplinary leadership team combining aerospace engineering, artificial intelligence, and software innovation to advance hydrogen-powered aviation.",
 }
 
-export default function TeamPage() {
-    const [members, setMembers] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-
-    useEffect(() => {
-        const fetchTeam = async () => {
-            try {
-                setLoading(true)
-                const response = await fetch('/api/team?active=true')
-                if (!response.ok) {
-                    throw new Error('Failed to fetch team members')
-                }
-                const data = await response.json()
-                setMembers(data || [])
-                setError(null)
-            } catch (err) {
-                setError(err.message)
-                console.error('Error fetching team:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchTeam()
-    }, [])
-
-    if (loading) {
-        return (
-            <section className="py-24 text-white min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <span className="ml-3 text-gray-300">Loading team...</span>
-            </section>
-        )
-    }
-
-    if (error) {
-        return (
-            <section className="py-24 text-white min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-red-400 mb-4">Error loading team</h2>
-                    <p className="text-gray-500">{error}</p>
-                </div>
-            </section>
-        )
-    }
+export default function TeamPage({ members: membersData }) {
   return (
     <section className="py-24 text-white">
       <div className="container mx-auto px-6 lg:px-10 text-center">
@@ -67,9 +21,9 @@ export default function TeamPage() {
           {teamData.subtitle}
         </p>
 
-        {members.length > 0 ? (
+        {membersData.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {members.map((m, i) => (
+            {membersData.map((m, i) => (
               <motion.div
                 key={m._id || m.name}
                 initial={{ opacity: 0, y: 40 }}

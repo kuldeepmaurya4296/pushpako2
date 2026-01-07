@@ -1,35 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Squares } from "@/components/ui/square";
 import { motion } from "framer-motion";
 
-export default function TechnologyPage() {
-    const [technologies, setTechnologies] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchTechnologies = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch('/api/technologies?status=active');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch technologies');
-                }
-                const data = await response.json();
-                setTechnologies(data || []);
-                setError(null);
-            } catch (err) {
-                setError(err.message);
-                console.error('Error fetching technologies:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTechnologies();
-    }, []);
+export default function TechnologyPage({ technologies: technologiesData }) {
     return (
         <main className="max-w-screen overflow-hidden">
             {/* ================= HERO ================= */}
@@ -80,19 +54,9 @@ export default function TechnologyPage() {
                         </p>
                     </motion.div>
 
-                    {loading ? (
-                        <div className="flex items-center justify-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                            <span className="ml-3 text-gray-300">Loading technologies...</span>
-                        </div>
-                    ) : error ? (
-                        <div className="text-center py-12">
-                            <h3 className="text-2xl font-bold text-red-400 mb-4">Error loading technologies</h3>
-                            <p className="text-gray-500">{error}</p>
-                        </div>
-                    ) : technologies.length > 0 ? (
+                    {technologiesData.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {technologies.map((tech, index) => (
+                            {technologiesData.map((tech, index) => (
                                 <motion.div
                                     key={tech._id || tech.title}
                                     initial={{ opacity: 0, y: 30 }}

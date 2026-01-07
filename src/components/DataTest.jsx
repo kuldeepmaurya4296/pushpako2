@@ -86,8 +86,8 @@ export default function DataTest() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Object.entries(results).map(([key, value]) => (
-                    <Link href={`/api/${key}` } target='_blank' >
-                        <div key={key} className="border rounded-lg p-4">
+                    <Link key={key} href={`/api/${key}` } target='_blank' >
+                        <div className="border rounded-lg p-4">
                             <h3 className="font-semibold capitalize">{key}</h3>
                             <p className={`text-sm ${value.success ? 'text-green-600' : 'text-red-600'}`}>
                                 {value.success ? 'Success' : 'Failed'}
