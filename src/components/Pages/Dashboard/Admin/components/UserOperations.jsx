@@ -35,9 +35,9 @@ export function AddEditUserDialog({ isOpen, onClose, onSubmit, formData, setForm
               onChange={(e) => setFormData({ ...formData, type: e.target.value })}
               className="w-full p-2 bg-gray-700 rounded"
             >
-              <option value="investor">Investor</option>
-              <option value="partner">Partner</option>
-              <option value="customer">Customer</option>
+              <option value="lead">Lead</option>
+              <option value="subscriber">Subscriber</option>
+              <option value="inquiry">Inquiry</option>
             </select>
             <input
               type="text"

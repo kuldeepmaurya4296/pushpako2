@@ -20,7 +20,8 @@ export default function BlogsManagement() {
       setLoading(true);
       const response = await fetch('/api/blogs');
       if (!response.ok) {
-        throw new Error('Failed to fetch blogs');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to fetch blogs (${response.status})`);
       }
       const data = await response.json();
       setBlogs(data.blogs || []);

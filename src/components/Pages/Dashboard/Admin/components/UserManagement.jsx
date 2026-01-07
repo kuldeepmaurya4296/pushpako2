@@ -1,11 +1,12 @@
-import { mockUsers } from '@/lib/mockUsers';
-import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Plus, Eye, Edit, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import { AddEditUserDialog, ViewUserDialog } from './UserOperations';
 import { DeleteDialog } from '@/components/ui/DeleteDialog';
+import { Pagination } from '@/components/ui/pagination';
 
 export default function UserManagement() {
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -14,17 +15,89 @@ export default function UserManagement() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    type: 'investor',
-    source: '',
+    type: 'lead',
+    source: 'Stay Updated',
     status: 'new',
   });
+
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [filterType, setFilterType] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterSource, setFilterSource] = useState('all');
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  // Fetch users/contacts from API
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      params.append('dataSource', 'all'); // Fetch both users and contacts
+      if (filterType !== 'all') params.append('type', filterType);
+      if (filterStatus !== 'all') params.append('status', filterStatus);
+      if (filterSource !== 'all') params.append('source', filterSource);
+      if (searchTerm) params.append('search', searchTerm);
+      params.append('sortBy', sortBy);
+      params.append('sortOrder', sortOrder);
+
+      const response = await fetch(`/api/users?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load users on component mount and when filters change
+  useEffect(() => {
+    fetchUsers();
+    // Reset to first page when filters change
+    setCurrentPage(1);
+  }, [filterType, filterStatus, filterSource, searchTerm, sortBy, sortOrder]);
+
+  // Calculate paginated data
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return users.slice(startIndex, endIndex);
+  }, [users, currentPage, pageSize]);
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Handle sorting
+  const handleSort = (column) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
+  // Get sort icon
+  const getSortIcon = (column) => {
+    if (sortBy !== column) return <ArrowUpDown className="w-4 h-4" />;
+    return sortOrder === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />;
+  };
 
   const handleAddUser = () => {
     setFormData({
       name: '',
       email: '',
-      type: 'investor',
-      source: '',
+      type: 'lead',
+      source: 'Stay Updated',
       status: 'new',
     });
     setIsAddDialogOpen(true);
@@ -52,35 +125,64 @@ export default function UserManagement() {
     setIsViewDialogOpen(true);
   };
 
-  const handleSubmitAdd = () => {
-    const newUser = {
-      ...formData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-    };
-    setUsers([...users, newUser]);
-    setIsAddDialogOpen(false);
+  const handleSubmitAdd = async () => {
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        fetchUsers(); // Refresh the list
+        setIsAddDialogOpen(false);
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
   };
 
-  const handleSubmitEdit = () => {
-    const updatedUser = {
-      ...selectedUser,
-      ...formData,
-    };
-    setUsers(users.map(user => user.id === selectedUser.id ? updatedUser : user));
-    setIsEditDialogOpen(false);
-    setSelectedUser(null);
+  const handleSubmitEdit = async () => {
+    try {
+      const response = await fetch(`/api/users/${selectedUser._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        fetchUsers(); // Refresh the list
+        setIsEditDialogOpen(false);
+        setSelectedUser(null);
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
   };
 
-  const handleConfirmDelete = () => {
-    setUsers(users.filter(user => user.id !== selectedUser.id));
-    setIsDeleteDialogOpen(false);
-    setSelectedUser(null);
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`/api/users/${selectedUser._id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        fetchUsers(); // Refresh the list
+        setIsDeleteDialogOpen(false);
+        setSelectedUser(null);
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <h2 className="text-2xl font-bold">User Management</h2>
         <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2" onClick={handleAddUser}>
           <Plus className="w-4 h-4" />
@@ -88,22 +190,121 @@ export default function UserManagement() {
         </button>
       </div>
 
+      {/* Search and Filters */}
+      <div className="bg-gray-800 p-4 rounded-lg space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Bar */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search by name, email, type, source, or status..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Types</option>
+              <option value="lead">Lead</option>
+              <option value="subscriber">Subscriber</option>
+              <option value="inquiry">Inquiry</option>
+            </select>
+
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="qualified">Qualified</option>
+              <option value="converted">Converted</option>
+            </select>
+
+            <select
+              value={filterSource}
+              onChange={(e) => setFilterSource(e.target.value)}
+              className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Sources</option>
+              <option value="Stay Updated">Stay Updated</option>
+              <option value="Contact Us">Contact Us</option>
+              <option value="website">Website</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-gray-800 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Source</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Created</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
+        {loading ? (
+          <div className="p-8 text-center text-gray-400">Loading users...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px]">
+              <thead className="bg-gray-700">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort('name')}
+                      className="flex items-center gap-1 hover:text-white transition-colors"
+                    >
+                      User {getSortIcon('name')}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort('type')}
+                      className="flex items-center gap-1 hover:text-white transition-colors"
+                    >
+                      Type {getSortIcon('type')}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort('source')}
+                      className="flex items-center gap-1 hover:text-white transition-colors"
+                    >
+                      Source {getSortIcon('source')}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort('status')}
+                      className="flex items-center gap-1 hover:text-white transition-colors"
+                    >
+                      Status {getSortIcon('status')}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort('createdAt')}
+                      className="flex items-center gap-1 hover:text-white transition-colors"
+                    >
+                      Created {getSortIcon('createdAt')}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
             <tbody className="divide-y divide-gray-700">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-750">
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-8 text-center text-gray-400">
+                    No users found matching your criteria.
+                  </td>
+                </tr>
+              ) : (
+                paginatedUsers.map((user) => (
+                  <tr key={user._id} className="hover:bg-gray-750">
                   <td className="px-6 py-4">
                     <div>
                       <div className="text-sm font-medium text-white">{user.name}</div>
@@ -136,14 +337,25 @@ export default function UserManagement() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
-          </table>
-        </div>
+            </table>
+          </div>
+        )}
       </div>
 
+      {/* Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        pageSize={pageSize}
+        totalItems={users.length}
+        onPageChange={handlePageChange}
+        className="border-t border-gray-700"
+      />
+
       {/* User Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total Users</h3>
           <p className="text-3xl font-bold text-blue-400">{users.length}</p>

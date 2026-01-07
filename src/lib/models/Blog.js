@@ -33,7 +33,6 @@ const BlogSchema = new mongoose.Schema(
 )
 
 // Add indexes for better performance
-BlogSchema.index({ slug: 1 })
 BlogSchema.index({ category: 1 })
 BlogSchema.index({ isPublished: 1 })
 BlogSchema.index({ isFeatured: 1 })

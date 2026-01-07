@@ -6,6 +6,7 @@ import BlogCard from './BlogCard';
 import SearchBar from './SearchBar';
 import CategoryFilter from './CategoryFilter';
 import RecentBlogs from './RecentBlogs';
+import NewsletterSignup from './NewsletterSignup';
 
 export default function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -177,20 +178,7 @@ export default function Blogs() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <h3 className="text-lg md:text-xl font-bold text-white mb-4">Stay Updated</h3>
-                <p className="text-gray-300 mb-4 text-sm md:text-base">
-                  Subscribe to our newsletter for the latest updates on aviation technology.
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
-                  />
-                  <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base">
-                    Subscribe
-                  </button>
-                </div>
+                <NewsletterSignup />
               </motion.div>
             </motion.div>
           </div>
