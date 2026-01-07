@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 export function AddEditAboutUsDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit, saving = false }) {
   if (!isOpen) return null;
@@ -49,12 +50,10 @@ export function AddEditAboutUsDialog({ isOpen, onClose, onSubmit, formData, setF
               required
               disabled={saving}
             />
-            <input
-              type="url"
-              placeholder="Image URL"
+            <ImageUpload
+              label="Image"
               value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded disabled:opacity-50"
+              onChange={(value) => setFormData({ ...formData, image: value })}
               disabled={saving}
             />
             <label className="flex items-center gap-2">

@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 export function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit, isSubmitting }) {
   if (!isOpen) return null;
@@ -72,12 +73,11 @@ export function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setForm
               onChange={(e) => setFormData({ ...formData, tags: e.target.value.split(',').map(tag => tag.trim()) })}
               className="w-full p-2 bg-gray-700 rounded"
             />
-            <input
-              type="url"
-              placeholder="Featured Image URL"
+            <ImageUpload
+              label="Featured Image"
               value={formData.featuredImage}
-              onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded"
+              onChange={(value) => setFormData({ ...formData, featuredImage: value })}
+              disabled={isSubmitting}
             />
             <input
               type="number"

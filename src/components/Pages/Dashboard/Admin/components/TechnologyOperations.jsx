@@ -1,4 +1,5 @@
 import { X, Loader2 } from 'lucide-react';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 export function AddEditTechnologyDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit, isSubmitting }) {
   if (!isOpen) return null;
@@ -60,12 +61,11 @@ export function AddEditTechnologyDialog({ isOpen, onClose, onSubmit, formData, s
               onChange={(e) => setFormData({ ...formData, downloads: parseInt(e.target.value) || 0 })}
               className="w-full p-2 bg-gray-700 rounded"
             />
-            <input
-              type="url"
-              placeholder="Featured Image URL"
+            <ImageUpload
+              label="Featured Image"
               value={formData.featuredImage}
-              onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded"
+              onChange={(value) => setFormData({ ...formData, featuredImage: value })}
+              disabled={isSubmitting}
             />
           </div>
           <div className="flex justify-end gap-2 mt-4">

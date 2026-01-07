@@ -42,6 +42,7 @@ export default function ServicesManagement() {
     category: 'Products',
     status: 'active',
     icon: '',
+    featuredImage: '',
     features: [],
     isPopular: false,
   });
@@ -54,6 +55,7 @@ export default function ServicesManagement() {
       category: 'Products',
       status: 'active',
       icon: '',
+      featuredImage: '',
       features: [],
       isPopular: false,
     });
@@ -69,6 +71,7 @@ export default function ServicesManagement() {
       category: service.category,
       status: service.status,
       icon: service.icon,
+      featuredImage: service.featuredImage || '',
       features: service.features,
       isPopular: service.isPopular,
     });
@@ -94,7 +97,6 @@ export default function ServicesManagement() {
         },
         body: JSON.stringify({
           ...formData,
-          featuredImage: '',
           images: [],
           pricing: {},
           testimonials: [],

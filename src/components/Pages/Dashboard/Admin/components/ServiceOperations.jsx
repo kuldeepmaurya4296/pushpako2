@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 export function AddEditServicesDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
   if (!isOpen) return null;
@@ -62,6 +63,11 @@ export function AddEditServicesDialog({ isOpen, onClose, onSubmit, formData, set
               value={formData.icon}
               onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
               className="w-full p-2 bg-gray-700 rounded"
+            />
+            <ImageUpload
+              label="Featured Image"
+              value={formData.featuredImage || ''}
+              onChange={(value) => setFormData({ ...formData, featuredImage: value })}
             />
             <input
               type="text"

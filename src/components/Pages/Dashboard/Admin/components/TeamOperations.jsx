@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 export function AddEditTeamDialog({ isOpen, onClose, onSave, member }) {
   const [formData, setFormData] = React.useState({
@@ -106,12 +107,10 @@ export function AddEditTeamDialog({ isOpen, onClose, onSave, member }) {
                 className="w-full p-2 bg-gray-700 rounded"
               />
             </div>
-            <input
-              type="url"
-              placeholder="Image URL"
+            <ImageUpload
+              label="Profile Image"
               value={formData.image}
-              onChange={(e) => handleChange('image', e.target.value)}
-              className="w-full p-2 bg-gray-700 rounded"
+              onChange={(value) => handleChange('image', value)}
             />
             <textarea
               placeholder="Bio"
