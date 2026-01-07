@@ -8,7 +8,8 @@ export default async function RoadmapPage() {
 
   try {
     await connectDB();
-    roadmapData = await Roadmap.find({}).sort({ order: 1 });
+    roadmapData = await Roadmap.find({}).sort({ order: 1 }).lean();
+    roadmapData = JSON.parse(JSON.stringify(roadmapData));
   } catch (error) {
     console.error("Error fetching roadmap:", error);
   }

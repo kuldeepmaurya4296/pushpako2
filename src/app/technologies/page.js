@@ -7,7 +7,8 @@ export default async function page() {
 
   try {
     await connectDB();
-    technologies = await Technology.find({ status: 'active' }).sort({ createdAt: -1 });
+    technologies = await Technology.find({ status: 'active' }).sort({ createdAt: -1 }).lean();
+    technologies = JSON.parse(JSON.stringify(technologies));
   } catch (error) {
     console.error("Error fetching technologies:", error);
   }

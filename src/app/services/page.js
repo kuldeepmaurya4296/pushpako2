@@ -7,7 +7,8 @@ export default async function page() {
 
   try {
     await connectDB();
-    services = await Service.find({ status: 'active' }).sort({ createdAt: -1 });
+    services = await Service.find({ status: 'active' }).sort({ createdAt: -1 }).lean();
+    services = JSON.parse(JSON.stringify(services));
   } catch (error) {
     console.error("Error fetching services:", error);
   }

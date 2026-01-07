@@ -12,11 +12,12 @@ export default async function page() {
 
   try {
     await connectDB();
-    members = await Team.find({ active: true }).sort({ order: 1 });
+    members = await Team.find({ isActive: true }).sort({ order: 1 }).lean();
+    members = JSON.parse(JSON.stringify(members));
+    console.log(' members:', members);
   } catch (error) {
     console.error("Error fetching team:", error);
   }
-
   return (
     <div className="min-h-screen text-white bg-[#060B18]">
       <TeamsClient members={members} />

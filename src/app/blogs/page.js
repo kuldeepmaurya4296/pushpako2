@@ -7,7 +7,8 @@ export default async function page() {
 
   try {
     await connectDB();
-    blogs = await Blog.find({ isPublished: true }).sort({ createdAt: -1 });
+    blogs = await Blog.find({ isPublished: true }).sort({ createdAt: -1 }).lean();
+    blogs = JSON.parse(JSON.stringify(blogs));
   } catch (error) {
     console.error("Error fetching blogs:", error);
   }

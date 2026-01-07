@@ -15,9 +15,6 @@ const TestimonialSchema = new mongoose.Schema({
   date: String,
 })
 
-const SpecificationSchema = new mongoose.Schema({
-  [String]: String
-}, { _id: false })
 
 const ServiceSchema = new mongoose.Schema(
   {

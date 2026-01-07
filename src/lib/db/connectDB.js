@@ -8,26 +8,19 @@ if (!MONGODB_URI && process.env.NODE_ENV !== 'test' && !process.env.CI) {
   console.warn("MONGODB_URI not found, ensure it's loaded before connecting");
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
 export async function connectDB() {
-  if (cached.conn) return cached.conn;
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
 
   const uri = process.env.MONGODB_URI || MONGODB_URI;
   if (!uri) {
     throw new Error("Please define MONGODB_URI in .env.local");
   }
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(uri, {
-      bufferCommands: false,
-    });
-  }
+  await mongoose.connect(uri, {
+    bufferCommands: false,
+  });
 
-  cached.conn = await cached.promise;
-  return cached.conn;
+  return mongoose.connection;
 }
