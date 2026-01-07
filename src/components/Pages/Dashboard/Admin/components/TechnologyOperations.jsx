@@ -1,6 +1,6 @@
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
-export function AddEditTechnologyDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
+export function AddEditTechnologyDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit, isSubmitting }) {
   if (!isOpen) return null;
 
   return (
@@ -70,7 +70,10 @@ export function AddEditTechnologyDialog({ isOpen, onClose, onSubmit, formData, s
           </div>
           <div className="flex justify-end gap-2 mt-4">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">{isEdit ? 'Update Technology' : 'Add Technology'}</button>
+            <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+              {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isEdit ? 'Update Technology' : 'Add Technology'}
+            </button>
           </div>
         </form>
       </div>
@@ -117,7 +120,14 @@ export function ViewTechnologyDialog({ isOpen, onClose, technology }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300">Featured Image</label>
-            <p className="mt-1 text-white">{technology.featuredImage}</p>
+            {technology.featuredImage ? (
+              <div className="mt-1">
+                <img src={technology.featuredImage} alt={technology.title} className="max-w-xs h-auto rounded" />
+                <p className="mt-2 text-white">{technology.featuredImage}</p>
+              </div>
+            ) : (
+              <p className="mt-1 text-gray-400">No image provided</p>
+            )}
           </div>
         </div>
         <div className="flex justify-end mt-4">
