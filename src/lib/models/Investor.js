@@ -24,25 +24,31 @@ const InvestorSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone: String,
-    investmentAmount: { type: Number, required: true },
-    currentValue: { type: Number, required: true },
+    password: { type: String }, // Hashed password for email auth
+    authProvider: { type: String, enum: ['email', 'google'], default: 'email' },
+    googleId: { type: String }, // For Google OAuth
+    role: { type: String, enum: ['investor', 'admin'], default: 'investor' },
+    resetToken: String,
+    resetTokenExpiry: Date,
+    investmentAmount: { type: Number, default: 0 },
+    currentValue: { type: Number, default: 0 },
     roi: { type: Number, default: 0 },
-    joinDate: { type: String, required: true },
+    joinDate: { type: String },
     profilePicture: String,
     type: {
       type: String,
       enum: ["individual", "institutional", "angel"],
-      required: true
+      default: "individual"
     },
     riskProfile: {
       type: String,
       enum: ["conservative", "moderate", "aggressive"],
-      required: true
+      default: "moderate"
     },
     investmentStage: {
       type: String,
       enum: ["seed", "series-a", "series-b"],
-      required: true
+      default: "seed"
     },
     portfolio: [PortfolioItemSchema],
     communicationLog: [CommunicationLogSchema],

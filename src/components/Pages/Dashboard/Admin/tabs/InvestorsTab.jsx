@@ -1,15 +1,17 @@
-import { mockInvestors } from '@/lib/mockInvestors';
+'use client';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import InvestorsTable from '../components/InvestorsTable';
 import InvestorsStats from '../components/InvestorsStats';
 import AddInvestorDialog from '../components/AddInvestorDialog';
 import EditInvestorDialog from '../components/EditInvestorDialog';
 import ViewInvestorDialog from '../components/ViewInvestorDialog';
 import { DeleteDialog } from '@/components/ui/DeleteDialog';
+import toast from 'react-hot-toast';
 
 export default function InvestorsTab() {
-  const [investors, setInvestors] = useState(mockInvestors);
+  const [investors, setInvestors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -24,50 +26,111 @@ export default function InvestorsTab() {
     riskProfile: 'moderate',
     investmentStage: 'seed',
     status: 'active',
+    role: 'investor',
     notes: '',
   });
 
-  const handleAddInvestor = () => {
-    const newInvestor = {
-      id: Date.now().toString(),
-      ...formData,
-      investmentAmount: parseFloat(formData.investmentAmount),
-      currentValue: parseFloat(formData.investmentAmount) * 1.1, // simple calc
-      roi: 10,
-      joinDate: new Date().toISOString().split('T')[0],
-      profilePicture: '/next.svg', // default
-      portfolio: [{ company: 'Pushpak O2', percentage: 100, invested: parseFloat(formData.investmentAmount), current: parseFloat(formData.investmentAmount) * 1.1 }],
-      communicationLog: [],
-      documents: [],
-      lastContact: new Date().toISOString().split('T')[0],
-      nextFollowUp: '',
-      tags: [],
-    };
-    setInvestors([...investors, newInvestor]);
-    setIsAddDialogOpen(false);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      investmentAmount: '',
-      type: 'individual',
-      riskProfile: 'moderate',
-      investmentStage: 'seed',
-      status: 'active',
-      notes: '',
-    });
+  useEffect(() => {
+    fetchInvestors();
+  }, []);
+
+  const fetchInvestors = async () => {
+    try {
+      const res = await fetch('/api/investors');
+      const data = await res.json();
+      setInvestors(data);
+    } catch (error) {
+      toast.error('Failed to fetch investors');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleEditInvestor = () => {
-    setInvestors(investors.map(inv => inv.id === selectedInvestor.id ? { ...inv, ...formData, investmentAmount: parseFloat(formData.investmentAmount) } : inv));
-    setIsEditDialogOpen(false);
-    setSelectedInvestor(null);
+  const handleAddInvestor = async () => {
+    try {
+      const res = await fetch('/api/investors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          investmentAmount: parseFloat(formData.investmentAmount) || 0,
+          currentValue: parseFloat(formData.investmentAmount) * 1.1 || 0,
+          roi: 10,
+          joinDate: new Date().toISOString().split('T')[0],
+          profilePicture: '/next.svg',
+          portfolio: [{ company: 'Pushpak O2', percentage: 100, invested: parseFloat(formData.investmentAmount) || 0, current: (parseFloat(formData.investmentAmount) || 0) * 1.1 }],
+          communicationLog: [],
+          documents: [],
+          lastContact: new Date().toISOString().split('T')[0],
+          nextFollowUp: '',
+          tags: [],
+        }),
+      });
+      if (res.ok) {
+        toast.success('Investor added successfully');
+        fetchInvestors();
+        setIsAddDialogOpen(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          investmentAmount: '',
+          type: 'individual',
+          riskProfile: 'moderate',
+          investmentStage: 'seed',
+          status: 'active',
+          role: 'investor',
+          notes: '',
+        });
+      } else {
+        const data = await res.json();
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error('Failed to add investor');
+    }
   };
 
-  const handleDeleteInvestor = () => {
-    setInvestors(investors.filter(inv => inv.id !== selectedInvestor.id));
-    setIsDeleteDialogOpen(false);
-    setSelectedInvestor(null);
+  const handleEditInvestor = async () => {
+    try {
+      const res = await fetch(`/api/investors/${selectedInvestor._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          investmentAmount: parseFloat(formData.investmentAmount) || 0,
+        }),
+      });
+      if (res.ok) {
+        toast.success('Investor updated successfully');
+        fetchInvestors();
+        setIsEditDialogOpen(false);
+        setSelectedInvestor(null);
+      } else {
+        const data = await res.json();
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error('Failed to update investor');
+    }
+  };
+
+  const handleDeleteInvestor = async () => {
+    try {
+      const res = await fetch(`/api/investors/${selectedInvestor._id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        toast.success('Investor deleted successfully');
+        fetchInvestors();
+        setIsDeleteDialogOpen(false);
+        setSelectedInvestor(null);
+      } else {
+        toast.error('Failed to delete investor');
+      }
+    } catch (error) {
+      toast.error('Failed to delete investor');
+    }
   };
 
   const openEditDialog = (investor) => {
@@ -76,11 +139,12 @@ export default function InvestorsTab() {
       name: investor.name,
       email: investor.email,
       phone: investor.phone,
-      investmentAmount: investor.investmentAmount.toString(),
+      investmentAmount: investor.investmentAmount?.toString() || '',
       type: investor.type,
       riskProfile: investor.riskProfile,
       investmentStage: investor.investmentStage,
       status: investor.status,
+      role: investor.role,
       notes: investor.notes,
     });
     setIsEditDialogOpen(true);
@@ -103,6 +167,10 @@ export default function InvestorsTab() {
     setIsDeleteDialogOpen(false);
     setSelectedInvestor(null);
   };
+  if (loading) {
+    return <div className="text-center py-8">Loading investors...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">

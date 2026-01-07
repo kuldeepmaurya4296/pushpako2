@@ -83,27 +83,28 @@ export default function Footer() {
             Connect with Pushpak O2 for partnerships, investments, or media inquiries
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center items-stretch gap-4 max-w-3xl mx-auto">
             <Button
               variant="hero"
               size="xl"
-              className="group cursor-pointer p-2 px-4 bg-[#07c5eb17] border self-center w-4/5 md:w-1/5 text-xl py-2"
+              className="group w-full sm:w-auto min-w-[220px] max-w-full px-6 py-3 text-base sm:text-lg bg-[#07c5eb17] border flex items-center justify-center gap-2 "
               onClick={() => (window.location.href = "/contact-us")}
             >
-              Schedule a Call
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span className="whitespace-nowrap">Schedule a Call</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Button>
 
             <Button
               variant="heroOutline"
               size="xl"
-              className="group cursor-pointer p-2 px-4 border self-center text-white w-4/5 md:w-1/5 text-xl py-2"
+              className="group w-full sm:w-auto min-w-[220px] max-w-full px-6 py-3 text-base sm:text-lg bg-[#07c5eb00] border flex items-center justify-center gap-2 "
               onClick={handleDownload}
             >
-              Download Pitch Deck
-              <ArrowDown className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span className="whitespace-nowrap">Download Pitch Deck</span>
+              <ArrowDown className="w-4 h-4 transition-transform group-hover:translate-y-1" />
             </Button>
           </div>
+
         </motion.div>
 
         {/* MAIN FOOTER */}
@@ -248,18 +249,18 @@ export default function Footer() {
                 </a>
               )
             }) || (
-              <>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
-                  <Linkedin className="w-4 h-4" />
-                </a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
-                  <Instagram className="w-4 h-4" />
-                </a>
-              </>
-            )}
+                <>
+                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
+                    <Twitter className="w-4 h-4" />
+                  </a>
+                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
+                    <Linkedin className="w-4 h-4" />
+                  </a>
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
+                    <Instagram className="w-4 h-4" />
+                  </a>
+                </>
+              )}
           </div>
 
           <div className="flex gap-5 text-sm">

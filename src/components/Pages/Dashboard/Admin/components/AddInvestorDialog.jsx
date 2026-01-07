@@ -74,6 +74,14 @@ export default function AddInvestorDialog({ isOpen, onClose, onSubmit, formData,
               <option value="series-b">Series B</option>
             </select>
             <select
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              className="w-full p-2 bg-gray-700 rounded"
+            >
+              <option value="investor">Investor</option>
+              <option value="admin">Admin</option>
+            </select>
+            <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               className="w-full p-2 bg-gray-700 rounded"

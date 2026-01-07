@@ -9,6 +9,8 @@ export default function InvestorsTable({ investors, onView, onEdit, onDelete }) 
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Investor</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Role</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Auth Provider</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Investment</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Current Value</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">ROI</th>
@@ -29,9 +31,11 @@ export default function InvestorsTable({ investors, onView, onEdit, onDelete }) 
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-300 capitalize">{investor.type}</td>
-                <td className="px-6 py-4 text-sm text-gray-300">${investor.investmentAmount.toLocaleString()}</td>
-                <td className="px-6 py-4 text-sm text-gray-300">${investor.currentValue.toLocaleString()}</td>
-                <td className="px-6 py-4 text-sm text-green-400">{investor.roi}%</td>
+                <td className="px-6 py-4 text-sm text-gray-300 capitalize">{investor.role || 'investor'}</td>
+                <td className="px-6 py-4 text-sm text-gray-300 capitalize">{investor.authProvider || 'email'}</td>
+                <td className="px-6 py-4 text-sm text-gray-300">${investor.investmentAmount?.toLocaleString() || 0}</td>
+                <td className="px-6 py-4 text-sm text-gray-300">${investor.currentValue?.toLocaleString() || 0}</td>
+                <td className="px-6 py-4 text-sm text-green-400">{investor.roi || 0}%</td>
                 <td className="px-6 py-4">
                   <span className={`px-2 py-1 text-xs rounded-full ${
                     investor.status === 'active' ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'

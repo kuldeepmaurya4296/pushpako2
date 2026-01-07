@@ -4,6 +4,7 @@ export default function NavigationTabs({ activeTab, setActiveTab }) {
     { key: 'performance', label: 'Company Performance' },
     { key: 'news', label: 'News & Updates' },
     { key: 'reports', label: 'Financial Reports' },
+    { key: 'profile', label: 'Profile' },
   ];
 
   return (

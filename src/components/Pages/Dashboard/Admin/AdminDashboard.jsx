@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import OverviewTab from './tabs/OverviewTab';
 import InvestorsTab from './tabs/InvestorsTab';
 import WebsiteTab from './tabs/WebsiteTab';
@@ -10,6 +12,7 @@ export default function AdminDashboard() {
   const [activeMainTab, setActiveMainTab] = useState('overview');
   const [activeSubTab, setActiveSubTab] = useState('blogs'); // for website management
   const [expandedSections, setExpandedSections] = useState({});
+  const router = useRouter();
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -36,7 +39,24 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#060B18] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+          <button
+            onClick={async () => {
+              try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                toast.success('Logged out successfully');
+                router.push('/sign-in');
+              } catch (error) {
+                toast.error('Logout failed');
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </div>
 
         {/* Main Navigation Tabs */}
         <div className="flex flex-wrap gap-2 md:gap-4 mb-8">
