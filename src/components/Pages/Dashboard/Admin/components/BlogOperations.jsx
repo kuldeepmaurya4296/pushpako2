@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 
-export function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
+export function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit, isSubmitting }) {
   if (!isOpen) return null;
 
   return (
@@ -8,7 +8,7 @@ export function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setForm
       <div className="bg-gray-800 p-6 rounded-lg w-full max-w-4xl max-h-full overflow-y-auto hide-scrollbar">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold">{isEdit ? 'Edit Blog' : 'Add New Blog'}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button onClick={onClose} className="text-gray-400 hover:text-white cursor-pointer">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -106,8 +106,10 @@ export function AddEditBlogDialog({ isOpen, onClose, onSubmit, formData, setForm
             </div>
           </div>
           <div className="flex justify-end gap-2 mt-4">
-            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">{isEdit ? 'Update Blog' : 'Add Blog'}</button>
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500 cursor-pointer" disabled={isSubmitting}>Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 cursor-pointer disabled:opacity-50" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : (isEdit ? 'Update Blog' : 'Add Blog')}
+            </button>
           </div>
         </form>
       </div>

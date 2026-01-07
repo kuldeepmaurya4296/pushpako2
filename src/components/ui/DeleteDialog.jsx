@@ -9,7 +9,8 @@ export function DeleteDialog({
   itemType = "item",
   customMessage,
   confirmButtonText = "Delete",
-  cancelButtonText = "Cancel"
+  cancelButtonText = "Cancel",
+  isSubmitting = false
 }) {
   if (!isOpen) return null;
 
@@ -41,15 +42,17 @@ export function DeleteDialog({
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-md text-white"
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-md text-white cursor-pointer"
+            disabled={isSubmitting}
           >
             {cancelButtonText}
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white cursor-pointer disabled:opacity-50"
+            disabled={isSubmitting}
           >
-            {confirmButtonText}
+            {isSubmitting ? 'Deleting...' : confirmButtonText}
           </button>
         </div>
       </div>

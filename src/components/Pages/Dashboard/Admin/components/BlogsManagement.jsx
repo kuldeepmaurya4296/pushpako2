@@ -13,6 +13,9 @@ export default function BlogsManagement() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
+  const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
+  const [isSubmittingDelete, setIsSubmittingDelete] = useState(false);
 
   // Fetch blogs from API
   const fetchBlogs = async () => {
@@ -92,6 +95,7 @@ export default function BlogsManagement() {
   };
 
   const handleSubmitAdd = async () => {
+    setIsSubmittingAdd(true);
     try {
       const response = await fetch('/api/blogs', {
         method: 'POST',
@@ -119,10 +123,13 @@ export default function BlogsManagement() {
     } catch (error) {
       console.error('Error creating blog:', error);
       toast.error('Failed to create blog');
+    } finally {
+      setIsSubmittingAdd(false);
     }
   };
 
   const handleSubmitEdit = async () => {
+    setIsSubmittingEdit(true);
     try {
       const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
         method: 'PUT',
@@ -143,10 +150,13 @@ export default function BlogsManagement() {
     } catch (error) {
       console.error('Error updating blog:', error);
       toast.error('Failed to update blog');
+    } finally {
+      setIsSubmittingEdit(false);
     }
   };
 
   const handleConfirmDelete = async () => {
+    setIsSubmittingDelete(true);
     try {
       const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
         method: 'DELETE',
@@ -163,6 +173,8 @@ export default function BlogsManagement() {
     } catch (error) {
       console.error('Error deleting blog:', error);
       toast.error('Failed to delete blog');
+    } finally {
+      setIsSubmittingDelete(false);
     }
   };
 
@@ -190,7 +202,7 @@ export default function BlogsManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Blog Management</h2>
-        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2" onClick={handleAddBlog}>
+        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer" onClick={handleAddBlog}>
           <Plus className="w-4 h-4" />
           Add New Blog
         </button>
@@ -235,14 +247,14 @@ export default function BlogsManagement() {
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/blogs/${blog.slug}`} target='_blank'
-                        className="text-blue-400 hover:text-blue-300 transition-colors"
+                        className="text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
-                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors" onClick={() => handleEditBlog(blog)}>
+                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors cursor-pointer" onClick={() => handleEditBlog(blog)}>
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button className="text-red-400 hover:text-red-300 transition-colors" onClick={() => handleDeleteBlog(blog)}>
+                      <button className="text-red-400 hover:text-red-300 transition-colors cursor-pointer" onClick={() => handleDeleteBlog(blog)}>
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -281,6 +293,7 @@ export default function BlogsManagement() {
         formData={formData}
         setFormData={setFormData}
         isEdit={false}
+        isSubmitting={isSubmittingAdd}
       />
 
       <AddEditBlogDialog
@@ -290,6 +303,7 @@ export default function BlogsManagement() {
         formData={formData}
         setFormData={setFormData}
         isEdit={true}
+        isSubmitting={isSubmittingEdit}
       />
 
       <DeleteDialog
@@ -299,6 +313,7 @@ export default function BlogsManagement() {
         title="Delete Blog"
         itemName={selectedBlog?.title}
         itemType="blog"
+        isSubmitting={isSubmittingDelete}
       />
     </div>
   );

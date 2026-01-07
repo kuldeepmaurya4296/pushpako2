@@ -41,11 +41,28 @@ export async function POST(request) {
   }
 }
 
-// PUT /api/about-us - Update about us content
+// PUT /api/about-us - Update about us content (supports partial updates)
 export async function PUT(request) {
   try {
     await connectDB()
     const data = await request.json()
+
+    // Validate that data is an object
+    if (typeof data !== 'object' || data === null) {
+      return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
+    }
+
+    // Optional: Add specific validation for allowed fields
+    const allowedSections = ['hero', 'vision', 'values', 'footer', 'stats']
+    const providedSections = Object.keys(data)
+
+    // Check if all provided keys are allowed sections
+    const invalidSections = providedSections.filter(section => !allowedSections.includes(section))
+    if (invalidSections.length > 0) {
+      return NextResponse.json({
+        error: `Invalid sections: ${invalidSections.join(', ')}. Allowed sections: ${allowedSections.join(', ')}`
+      }, { status: 400 })
+    }
 
     const aboutUs = await AboutUs.findOneAndUpdate({}, data, {
       new: true,
@@ -55,7 +72,16 @@ export async function PUT(request) {
 
     return NextResponse.json(aboutUs)
   } catch (error) {
-    console.error(error)
+    console.error('Error updating about us:', error)
+
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      return NextResponse.json({
+        error: "Validation failed",
+        details: Object.values(error.errors).map(err => err.message)
+      }, { status: 400 })
+    }
+
     return NextResponse.json({ error: "Server error" }, { status: 500 })
   }
 }

@@ -11,7 +11,7 @@ function mapContactToUser(contact) {
     email: contact.email,
     phone: null, // Contacts don't have phone
     type: 'inquiry', // Map contacts to inquiry type
-    source: contact.source || 'website',
+    source: 'Contact Us', // Map all contacts to "Contact Us" source
     message: contact.message,
     status: contact.status || 'new',
     tags: [], // Contacts don't have tags

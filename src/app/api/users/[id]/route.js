@@ -11,7 +11,7 @@ function mapContactToUser(contact) {
     email: contact.email,
     phone: null, // Contacts don't have phone
     type: 'inquiry', // Map contacts to inquiry type
-    source: contact.source || 'website',
+    source: 'Contact Us', // Map all contacts to "Contact Us" source
     message: contact.message,
     status: contact.status || 'new',
     tags: [], // Contacts don't have tags
@@ -29,7 +29,7 @@ function mapContactToUser(contact) {
 export async function GET(request, { params }) {
   try {
     await connectDB()
-    const { id } = params
+    const { id } = await params
 
     // Try to find in User collection first
     let record = await User.findById(id)
@@ -57,7 +57,7 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     await connectDB()
-    const { id } = params
+    const { id } = await params
     const data = await request.json()
 
     // Check if this is a contact record first
@@ -115,7 +115,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await connectDB()
-    const { id } = params
+    const { id } = await params
 
     // Check if this is a contact record first
     const existingContact = await Contact.findById(id)

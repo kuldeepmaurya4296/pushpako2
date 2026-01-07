@@ -1,48 +1,35 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Squares } from "@/components/ui/square";
 import { motion } from "framer-motion";
 
-const technologies = [
-    {
-        title: "Smart Charging System",
-        description:
-            "Automated battery charging with intelligent power management for rapid turnaround and maximum efficiency.",
-        image: "/charging-tray.gif",
-    },
-    {
-        title: "Hydrogen Refueling",
-        description:
-            "Quick hydrogen fuel cell replenishment enabling extended range and sustainable operations.",
-        image: "/hydrogen-filling.gif",
-    },
-    {
-        title: "Automated Hangar",
-        description:
-            "Precision-engineered hangars for seamless aircraft storage, security, and deployment.",
-        image: "/gate-open.gif",
-    },
-    {
-        title: "Vertical Takeoff (eVTOL)",
-        description:
-            "Runway-independent vertical takeoff and landing designed for dense urban environments.",
-        image: "/gate-open.gif",
-    },
-    {
-        title: "Autonomous Flight",
-        description:
-            "AI-powered navigation with real-time obstacle detection and intelligent route optimization.",
-        image: "/drone-flight.gif",
-    },
-    {
-        title: "Fleet Management",
-        description:
-            "Centralized real-time monitoring, diagnostics, and predictive maintenance scheduling.",
-        image: "/aircraft-inspection.png",
-    },
-];
-
 export default function TechnologyPage() {
+    const [technologies, setTechnologies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchTechnologies = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch('/api/technologies?status=active');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch technologies');
+                }
+                const data = await response.json();
+                setTechnologies(data || []);
+                setError(null);
+            } catch (err) {
+                setError(err.message);
+                console.error('Error fetching technologies:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTechnologies();
+    }, []);
     return (
         <main className="max-w-screen overflow-hidden">
             {/* ================= HERO ================= */}
@@ -93,41 +80,63 @@ export default function TechnologyPage() {
                         </p>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {technologies.map((tech, index) => (
-                            <motion.div
-                                key={tech.title}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="group relative rounded-2xl overflow-hidden border border-border/30 bg-card/30 backdrop-blur-sm hover:border-primary/50 transition-all duration-500"
-                            >
-                                {/* Image */}
-                                <div className="relative aspect-[4/3] overflow-hidden">
-                                    <img
-                                        src={tech.image}
-                                        alt={tech.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-                                </div>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-12">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                            <span className="ml-3 text-gray-300">Loading technologies...</span>
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-12">
+                            <h3 className="text-2xl font-bold text-red-400 mb-4">Error loading technologies</h3>
+                            <p className="text-gray-500">{error}</p>
+                        </div>
+                    ) : technologies.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {technologies.map((tech, index) => (
+                                <motion.div
+                                    key={tech._id || tech.title}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    className="group relative rounded-2xl overflow-hidden border border-border/30 bg-card/30 backdrop-blur-sm hover:border-primary/50 transition-all duration-500"
+                                >
+                                    {/* Image */}
+                                    <div className="relative aspect-[4/3] overflow-hidden">
+                                        <img
+                                            src={tech.featuredImage || "/placeholder-tech.jpg"}
+                                            alt={tech.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                                    </div>
 
-                                {/* Content */}
-                                <div className="p-6">
-                                    <h3 className="font-heading text-xl font-semibold mb-2">
-                                        {tech.title}
-                                    </h3>
-                                    <p className="text-gray-300 text-sm leading-relaxed">
-                                        {tech.description}
-                                    </p>
-                                </div>
+                                    {/* Content */}
+                                    <div className="p-6">
+                                        <h3 className="font-heading text-xl font-semibold mb-2">
+                                            {tech.title}
+                                        </h3>
+                                        <p className="text-gray-300 text-sm leading-relaxed">
+                                            {tech.description}
+                                        </p>
+                                    </div>
 
-                                {/* Hover Glow */}
-                                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                            </motion.div>
-                        ))}
-                    </div>
+                                    {/* Hover Glow */}
+                                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                                </motion.div>
+                            ))}
+                        </div>
+                    ) : (
+                        <motion.div
+                            className="text-center py-12"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <h3 className="text-2xl font-bold text-gray-400 mb-4">No technologies found</h3>
+                            <p className="text-gray-500">Technologies will be displayed here once added.</p>
+                        </motion.div>
+                    )}
                 </div>
             </section>
 

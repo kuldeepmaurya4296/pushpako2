@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
@@ -16,7 +17,69 @@ const fadeUp = {
     }),
 }
 
+const iconMap = {
+    "Sustainability": Leaf,
+    "Autonomy": Brain,
+    "Engineering": Plane,
+}
+
 export default function AboutPage() {
+    const [aboutData, setAboutData] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    useEffect(() => {
+        const fetchAboutData = async () => {
+            try {
+                setLoading(true)
+                const response = await fetch('/api/about-us')
+                if (!response.ok) {
+                    throw new Error('Failed to fetch about us data')
+                }
+                const data = await response.json()
+                setAboutData(data)
+                setError(null)
+            } catch (err) {
+                setError(err.message)
+                console.error('Error fetching about us data:', err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchAboutData()
+    }, [])
+
+    if (loading) {
+        return (
+            <main className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <span className="ml-3 text-gray-300">Loading...</span>
+            </main>
+        )
+    }
+
+    if (error) {
+        return (
+            <main className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-red-400 mb-4">Error loading page</h2>
+                    <p className="text-gray-500">{error}</p>
+                </div>
+            </main>
+        )
+    }
+
+    if (!aboutData) {
+        return (
+            <main className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-400 mb-4">No content available</h2>
+                    <p className="text-gray-500">About us content will be displayed here once added.</p>
+                </div>
+            </main>
+        )
+    }
     return (
         <main className="">
 
@@ -44,8 +107,8 @@ export default function AboutPage() {
                         custom={1}
                         className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
                     >
-                        Engineering the Future of{" "}
-                        <span className="text-[#07C5EB]">Clean Air Mobility</span>
+                        {aboutData.hero?.title || "Engineering the Future of"} {" "}
+                        <span className="text-[#07C5EB]">{aboutData.hero?.subtitle || "Clean Air Mobility"}</span>
                     </motion.h1>
 
                     <motion.p
@@ -55,8 +118,7 @@ export default function AboutPage() {
                         custom={2}
                         className="max-w-3xl mx-auto text-gray-300 text-lg"
                     >
-                        Pushpak O2 is building hydrogen-electric aircraft that combine
-                        sustainability, autonomy, and aerospace-grade engineering.
+                        {aboutData.hero?.description || "Pushpak O2 is building hydrogen-electric aircraft that combine sustainability, autonomy, and aerospace-grade engineering."}
                     </motion.p>
                 </div>
             </section>
@@ -71,18 +133,15 @@ export default function AboutPage() {
                         viewport={{ once: true }}
                     >
                         <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6">
-                            Our Vision
+                            {aboutData.vision?.title || "Our Vision"}
                         </h2>
 
                         <p className="text-gray-300 leading-relaxed mb-6">
-                            Aviation must evolve beyond fossil fuels and fixed infrastructure.
-                            Pushpak O2 exists to enable long-range, zero-emission air mobility
-                            using hydrogen-electric propulsion.
+                            {aboutData.vision?.content || "Aviation must evolve beyond fossil fuels and fixed infrastructure. Pushpak O2 exists to enable long-range, zero-emission air mobility using hydrogen-electric propulsion."}
                         </p>
 
                         <p className="text-gray-300 leading-relaxed">
-                            By integrating AI-driven autonomy and advanced energy systems, we
-                            are creating aircraft designed for real-world deployment.
+                            {aboutData.vision?.extendedContent || "By integrating AI-driven autonomy and advanced energy systems, we are creating aircraft designed for real-world deployment."}
                         </p>
                     </motion.div>
 
@@ -121,29 +180,26 @@ export default function AboutPage() {
                     </motion.h2>
 
                     <div className="grid md:grid-cols-3 gap-8">
-                        {[
+                        {(aboutData.values || [
                             {
-                                icon: Leaf,
                                 title: "Sustainability",
-                                desc: "Zero-emission hydrogen propulsion aligned with global climate goals.",
+                                description: "Zero-emission hydrogen propulsion aligned with global climate goals.",
                             },
                             {
-                                icon: Brain,
                                 title: "Autonomy",
-                                desc: "AI-powered systems enabling safe, scalable, and intelligent flight.",
+                                description: "AI-powered systems enabling safe, scalable, and intelligent flight.",
                             },
                             {
-                                icon: Plane,
                                 title: "Engineering",
-                                desc: "Aerospace-grade design built for certification and long-term reliability.",
+                                description: "Aerospace-grade design built for certification and long-term reliability.",
                             },
-                        ].map((item, i) => {
+                        ]).map((item, i) => {
                             const isBlue = i % 2 !== 0;
-                            const Icon = item.icon;
+                            const Icon = iconMap[item.title] || Leaf;
 
                             return (
                                 <motion.div
-                                    key={item.title}
+                                    key={item.id || item.title}
                                     variants={fadeUp}
                                     initial="hidden"
                                     whileInView="visible"
@@ -174,7 +230,7 @@ export default function AboutPage() {
 
                                     {/* Description */}
                                     <p className="text-sm text-muted-foreground leading-relaxed">
-                                        {item.desc}
+                                        {item.description}
                                     </p>
                                 </motion.div>
                             );

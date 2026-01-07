@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { AddEditUserDialog, ViewUserDialog } from './UserOperations';
 import { DeleteDialog } from '@/components/ui/DeleteDialog';
 import { Pagination } from '@/components/ui/pagination';
+import toast from 'react-hot-toast';
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -12,6 +13,9 @@ export default function UserManagement() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
+  const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
+  const [isSubmittingDelete, setIsSubmittingDelete] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -126,6 +130,7 @@ export default function UserManagement() {
   };
 
   const handleSubmitAdd = async () => {
+    setIsSubmittingAdd(true);
     try {
       const response = await fetch('/api/users', {
         method: 'POST',
@@ -136,15 +141,23 @@ export default function UserManagement() {
       });
 
       if (response.ok) {
+        toast.success('User added successfully');
         fetchUsers(); // Refresh the list
         setIsAddDialogOpen(false);
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to add user');
       }
     } catch (error) {
       console.error('Error adding user:', error);
+      toast.error('Network error. Please try again.');
+    } finally {
+      setIsSubmittingAdd(false);
     }
   };
 
   const handleSubmitEdit = async () => {
+    setIsSubmittingEdit(true);
     try {
       const response = await fetch(`/api/users/${selectedUser._id}`, {
         method: 'PUT',
@@ -155,28 +168,43 @@ export default function UserManagement() {
       });
 
       if (response.ok) {
+        toast.success('User updated successfully');
         fetchUsers(); // Refresh the list
         setIsEditDialogOpen(false);
         setSelectedUser(null);
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to update user');
       }
     } catch (error) {
       console.error('Error updating user:', error);
+      toast.error('Network error. Please try again.');
+    } finally {
+      setIsSubmittingEdit(false);
     }
   };
 
   const handleConfirmDelete = async () => {
+    setIsSubmittingDelete(true);
     try {
       const response = await fetch(`/api/users/${selectedUser._id}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
+        toast.success('User deleted successfully');
         fetchUsers(); // Refresh the list
         setIsDeleteDialogOpen(false);
         setSelectedUser(null);
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to delete user');
       }
     } catch (error) {
       console.error('Error deleting user:', error);
+      toast.error('Network error. Please try again.');
+    } finally {
+      setIsSubmittingDelete(false);
     }
   };
 
@@ -184,7 +212,7 @@ export default function UserManagement() {
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <h2 className="text-2xl font-bold">User Management</h2>
-        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2" onClick={handleAddUser}>
+        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer" onClick={handleAddUser}>
           <Plus className="w-4 h-4" />
           Add New User
         </button>
@@ -255,7 +283,7 @@ export default function UserManagement() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     <button
                       onClick={() => handleSort('name')}
-                      className="flex items-center gap-1 hover:text-white transition-colors"
+                      className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
                     >
                       User {getSortIcon('name')}
                     </button>
@@ -263,7 +291,7 @@ export default function UserManagement() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     <button
                       onClick={() => handleSort('type')}
-                      className="flex items-center gap-1 hover:text-white transition-colors"
+                      className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
                     >
                       Type {getSortIcon('type')}
                     </button>
@@ -271,7 +299,7 @@ export default function UserManagement() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     <button
                       onClick={() => handleSort('source')}
-                      className="flex items-center gap-1 hover:text-white transition-colors"
+                      className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
                     >
                       Source {getSortIcon('source')}
                     </button>
@@ -279,7 +307,7 @@ export default function UserManagement() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     <button
                       onClick={() => handleSort('status')}
-                      className="flex items-center gap-1 hover:text-white transition-colors"
+                      className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
                     >
                       Status {getSortIcon('status')}
                     </button>
@@ -287,7 +315,7 @@ export default function UserManagement() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     <button
                       onClick={() => handleSort('createdAt')}
-                      className="flex items-center gap-1 hover:text-white transition-colors"
+                      className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
                     >
                       Created {getSortIcon('createdAt')}
                     </button>
@@ -325,13 +353,13 @@ export default function UserManagement() {
                   <td className="px-6 py-4 text-sm text-gray-300">{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <button className="text-blue-400 hover:text-blue-300 transition-colors" onClick={() => handleViewUser(user)}>
+                      <button className="text-blue-400 hover:text-blue-300 transition-colors cursor-pointer" onClick={() => handleViewUser(user)}>
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors" onClick={() => handleEditUser(user)}>
+                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors cursor-pointer" onClick={() => handleEditUser(user)}>
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button className="text-red-400 hover:text-red-300 transition-colors" onClick={() => handleDeleteUser(user)}>
+                      <button className="text-red-400 hover:text-red-300 transition-colors cursor-pointer" onClick={() => handleDeleteUser(user)}>
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -381,6 +409,7 @@ export default function UserManagement() {
         formData={formData}
         setFormData={setFormData}
         isEdit={false}
+        isSubmitting={isSubmittingAdd}
       />
 
       <AddEditUserDialog
@@ -390,6 +419,7 @@ export default function UserManagement() {
         formData={formData}
         setFormData={setFormData}
         isEdit={true}
+        isSubmitting={isSubmittingEdit}
       />
 
       <DeleteDialog
@@ -399,6 +429,7 @@ export default function UserManagement() {
         title="Delete User"
         itemName={selectedUser?.name}
         itemType="user"
+        isSubmitting={isSubmittingDelete}
       />
 
       <ViewUserDialog

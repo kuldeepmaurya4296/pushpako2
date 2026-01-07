@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 
-export function AddEditAboutUsDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) {
+export function AddEditAboutUsDialog({ isOpen, onClose, onSubmit, formData, setFormData, isEdit, saving = false }) {
   if (!isOpen) return null;
 
   return (
@@ -19,51 +19,70 @@ export function AddEditAboutUsDialog({ isOpen, onClose, onSubmit, formData, setF
               placeholder="Section"
               value={formData.section}
               onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded"
+              className="w-full p-2 bg-gray-700 rounded disabled:opacity-50"
               required
+              disabled={saving}
             />
             <input
               type="text"
               placeholder="Title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded"
+              className="w-full p-2 bg-gray-700 rounded disabled:opacity-50"
               required
+              disabled={saving}
             />
             <input
               type="text"
               placeholder="Subtitle"
               value={formData.subtitle}
               onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded"
+              className="w-full p-2 bg-gray-700 rounded disabled:opacity-50"
+              disabled={saving}
             />
             <textarea
               placeholder="Content"
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded"
+              className="w-full p-2 bg-gray-700 rounded disabled:opacity-50"
               rows="5"
               required
+              disabled={saving}
             />
             <input
               type="url"
               placeholder="Image URL"
               value={formData.image}
               onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              className="w-full p-2 bg-gray-700 rounded"
+              className="w-full p-2 bg-gray-700 rounded disabled:opacity-50"
+              disabled={saving}
             />
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                disabled={saving}
               />
               Active
             </label>
           </div>
           <div className="flex justify-end gap-2 mt-4">
-            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">{isEdit ? 'Update Section' : 'Add Section'}</button>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+              className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {saving ? 'Saving...' : (isEdit ? 'Update Section' : 'Add Section')}
+            </button>
           </div>
         </form>
       </div>

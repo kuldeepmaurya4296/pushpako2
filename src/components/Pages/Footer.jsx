@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Plane, Twitter, Linkedin, Instagram, ArrowRight, Mail, Phone, ChevronDown, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -33,14 +33,28 @@ const footerSections = [
   },
 ]
 
-const socialLinks = [
-  { icon: Twitter, href: "https://twitter.com" },
-  { icon: Linkedin, href: "https://linkedin.com" },
-  { icon: Instagram, href: "https://instagram.com" },
-]
-
 export default function Footer() {
   const [open, setOpen] = useState(null)
+  const [footerData, setFooterData] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchFooterData = async () => {
+      try {
+        const response = await fetch('/api/about-us')
+        if (response.ok) {
+          const data = await response.json()
+          setFooterData(data.footer)
+        }
+      } catch (error) {
+        console.error('Error fetching footer data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchFooterData()
+  }, [])
 
   const handleDownload = () => {
     const link = document.createElement("a")
@@ -113,26 +127,26 @@ export default function Footer() {
             </div>
 
             <p className="text-sm text-gray-300 leading-relaxed mb-5 max-w-xs">
-              Pushpako2 Second Floor, 11, Aadi Parishar, Bagsewaniya, Sant Ashram Nagar, Bhel Sangam Colony, Face2, Bhopal Madhya Pradesh
+              {footerData?.companyInfo?.address || "Pushpako2 Second Floor, 11, Aadi Parishar, Bagsewaniya, Sant Ashram Nagar, Bhel Sangam Colony, Face2, Bhopal Madhya Pradesh"}
             </p>
 
             <div className="space-y-2">
               <a
                 target="_blank"
-                href="mailto:info@pushpak-o2.com"
+                href={`mailto:${footerData?.companyInfo?.email || 'info@pushpak-o2.com'}`}
                 className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                info@pushpak-o2.com
+                {footerData?.companyInfo?.email || 'info@pushpak-o2.com'}
               </a>
 
               <a
                 target="_blank"
-                href="tel:+918085613350"
+                href={`tel:${footerData?.companyInfo?.phone || '+918085613350'}`}
                 className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                +91-8085613350
+                {footerData?.companyInfo?.phone || '+91-8085613350'}
               </a>
             </div>
 
@@ -209,12 +223,23 @@ export default function Footer() {
           </p>
 
           <div className="flex gap-3">
-            {socialLinks.map((s, i) => {
-              const Icon = s.icon
+            {footerData?.socialLinks?.map((s, i) => {
+              // Map platform names to icon components
+              const iconMap = {
+                twitter: Twitter,
+                linkedin: Linkedin,
+                instagram: Instagram,
+                facebook: () => <span>📘</span>,
+                youtube: () => <span>📺</span>,
+                github: () => <span>💻</span>,
+                discord: () => <span>💬</span>,
+                telegram: () => <span>✈️</span>,
+              };
+              const Icon = iconMap[s.platform] || (() => <span>{s.icon || '🔗'}</span>);
               return (
                 <a
-                  key={i}
-                  href={s.href}
+                  key={s.platform}
+                  href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition"
@@ -222,7 +247,19 @@ export default function Footer() {
                   <Icon className="w-4 h-4" />
                 </a>
               )
-            })}
+            }) || (
+              <>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition">
+                  <Instagram className="w-4 h-4" />
+                </a>
+              </>
+            )}
           </div>
 
           <div className="flex gap-5 text-sm">
