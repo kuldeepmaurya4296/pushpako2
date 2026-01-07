@@ -1,5 +1,3 @@
-import Footer from "../Footer";
-import Header from "../Header";
 import About from "./About";
 import { Benefits } from "./Benefits";
 import Hero from "./Hero";
@@ -9,8 +7,6 @@ import Technology from "./Technology";
 
 export default function Home() {
   return (
-
-
     <main>
       <Hero />
       <Partners />
@@ -20,6 +16,5 @@ export default function Home() {
       <Benefits />
       <Stats />
     </main>
-
   )
 }

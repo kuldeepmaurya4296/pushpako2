@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-
-
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function SignInClientComponent() {
     const [isSignIn, setIsSignIn] = useState(true);
@@ -12,6 +12,8 @@ export default function SignInClientComponent() {
         confirmPassword: '',
         name: '',
     });
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleChange = (e) => {
         setFormData({
@@ -20,13 +22,69 @@ export default function SignInClientComponent() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
         if (isSignIn) {
-            console.log('Sign In:', { email: formData.email, password: formData.password });
+            // Sign In
+            try {
+                const res = await fetch('/api/auth/sign-in', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        password: formData.password,
+                    }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    toast.success('Signed in successfully');
+                    // Redirect based on role
+                    if (data.user.role === 'admin') {
+                        router.push('/dashboards/admin');
+                    } else {
+                        router.push(`/dashboards/investors/${data.user.id}`);
+                    }
+                } else {
+                    toast.error(data.error);
+                }
+            } catch (error) {
+                toast.error('Something went wrong');
+            }
         } else {
-            console.log('Sign Up:', formData);
+            // Sign Up
+            if (formData.password !== formData.confirmPassword) {
+                toast.error('Passwords do not match');
+                setLoading(false);
+                return;
+            }
+            try {
+                const res = await fetch('/api/auth/sign-up', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        password: formData.password,
+                    }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    toast.success('Account created successfully');
+                    setIsSignIn(true);
+                } else {
+                    toast.error(data.error);
+                }
+            } catch (error) {
+                toast.error('Something went wrong');
+            }
         }
+        setLoading(false);
+    };
+
+    const handleGoogleSignIn = () => {
+        signIn('google', { callbackUrl: '/dashboards/investors' });
     };
 
     return (
@@ -123,19 +181,25 @@ export default function SignInClientComponent() {
 
                         {isSignIn && (
                             <div className="flex justify-end">
-                                <a href="#" className="text-blue-600 text-sm hover:underline">
+                                <button
+                                    onClick={() => router.push('/forgot-password')}
+                                    className="text-blue-600 text-sm hover:underline"
+                                >
                                     Forgot Password?
-                                </a>
+                                </button>
                             </div>
                         )}
 
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
+                            disabled={loading}
+                            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                         >
-                            {isSignIn ? 'Sign In' : 'Sign Up'}
+                            {loading ? 'Loading...' : (isSignIn ? 'Sign In' : 'Sign Up')}
                         </button>
                     </form>
+
+                    {/* Google Sign-In can be implemented with OAuth providers */}
 
                     <div className="mt-6 text-center text-gray-600 text-sm">
                         By continuing, you agree to our Terms of Service and Privacy Policy

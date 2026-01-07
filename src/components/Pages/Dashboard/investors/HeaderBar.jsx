@@ -1,8 +1,22 @@
 'use client';
+import { LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function HeaderBar({ investor, onProfileAction }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      toast.success('Logged out successfully');
+      router.push('/sign-in');
+    } catch (error) {
+      toast.error('Logout failed');
+    }
+  };
 
   return (
     <div className="flex justify-between items-center mb-8">
@@ -45,10 +59,11 @@ export default function HeaderBar({ investor, onProfileAction }) {
               Edit Profile
             </button>
             <button
-              onClick={() => alert('Logout functionality not implemented')}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-700 transition text-red-400"
+              onClick={handleLogout}
+              className="flex items-center gap-2 w-full text-left px-4 py-2 bg-red-600 hover:bg-red-700 transition rounded-b-lg"
             >
-              Sign Out
+              <LogOut className="w-4 h-4" />
+              Logout
             </button>
           </div>
         )}

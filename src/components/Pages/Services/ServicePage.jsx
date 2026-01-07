@@ -24,47 +24,12 @@ const fadeUp = {
     }),
 }
 
-/* ---------------------------------------------
-   DATA
----------------------------------------------- */
-const servicesData = [
-    {
-        icon: Plane,
-        title: "Aircraft Solutions",
-        description:
-            "Hydrogen-electric aircraft platforms optimized for cargo, logistics, and special mission operations.",
-    },
-    {
-        icon: Network,
-        title: "Fleet Operations",
-        description:
-            "End-to-end fleet monitoring, operational analytics, and performance optimization.",
-    },
-    {
-        icon: Wrench,
-        title: "Maintenance & Lifecycle",
-        description:
-            "Predictive maintenance systems and lifecycle management ensuring maximum aircraft uptime.",
-    },
-    {
-        icon: ShieldCheck,
-        title: "Safety & Compliance",
-        description:
-            "Regulatory alignment, certification-ready systems, and aerospace-grade safety validation.",
-    },
-    {
-        icon: Plane,
-        title: "Custom Integrations",
-        description:
-            "Mission-specific payloads, sensors, and aircraft customization tailored to client needs.",
-    },
-    {
-        icon: Network,
-        title: "Enterprise Deployment",
-        description:
-            "Scalable deployment strategies for enterprise, defense, and government use cases.",
-    },
-]
+const iconMap = {
+    "plane": Plane,
+    "wrench": Wrench,
+    "network": Network,
+    "shield-check": ShieldCheck,
+}
 
 const processSteps = [
     "Requirement Analysis",
@@ -76,7 +41,7 @@ const processSteps = [
 /* ---------------------------------------------
    COMPONENT
 ---------------------------------------------- */
-export default function ServicesPage() {
+export default function ServicesPage({ services: servicesData }) {
     return (
         <main className="">
 
@@ -124,30 +89,42 @@ export default function ServicesPage() {
             {/* ================= SERVICES ================= */}
             <section className="py-24">
                 <div className="container mx-auto px-6 lg:px-10">
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {servicesData.map((service, index) => {
-                            const Icon = service.icon
-                            return (
-                                <motion.div
-                                    key={service.title}
-                                    variants={fadeUp}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    custom={index}
-                                    className="p-8 rounded-2xl  border border-border hover:border-primary/40 transition"
-                                >
-                                    <Icon className="w-10 h-10 text-white mb-4" />
-                                    <h3 className="font-heading text-xl font-semibold mb-3 text-gray-300">
-                                        {service.title}
-                                    </h3>
-                                    <p className="text-gray-300 text-sm leading-relaxed">
-                                        {service.description}
-                                    </p>
-                                </motion.div>
-                            )
-                        })}
-                    </div>
+                    {servicesData.length > 0 ? (
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {servicesData.map((service, index) => {
+                                const Icon = iconMap[service.icon] || Plane
+                                return (
+                                    <motion.div
+                                        key={service._id || service.title}
+                                        variants={fadeUp}
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{ once: true }}
+                                        custom={index}
+                                        className="p-8 rounded-2xl  border border-border hover:border-primary/40 transition"
+                                    >
+                                        <Icon className="w-10 h-10 text-white mb-4" />
+                                        <h3 className="font-heading text-xl font-semibold mb-3 text-gray-300">
+                                            {service.title}
+                                        </h3>
+                                        <p className="text-gray-300 text-sm leading-relaxed">
+                                            {service.description}
+                                        </p>
+                                    </motion.div>
+                                )
+                            })}
+                        </div>
+                    ) : (
+                        <motion.div
+                            className="text-center py-12"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <h3 className="text-2xl font-bold text-gray-400 mb-4">No services available</h3>
+                            <p className="text-gray-500">Services will be displayed here once added.</p>
+                        </motion.div>
+                    )}
                 </div>
             </section>
 

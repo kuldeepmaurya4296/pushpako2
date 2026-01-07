@@ -1,93 +1,225 @@
-import { mockInvestors } from '@/lib/mockInvestors';
-import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
+'use client';
+import { Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import InvestorsTable from '../components/InvestorsTable';
+import InvestorsStats from '../components/InvestorsStats';
+import AddInvestorDialog from '../components/AddInvestorDialog';
+import EditInvestorDialog from '../components/EditInvestorDialog';
+import ViewInvestorDialog from '../components/ViewInvestorDialog';
+import { DeleteDialog } from '@/components/ui/DeleteDialog';
+import toast from 'react-hot-toast';
 
 export default function InvestorsTab() {
+  const [investors, setInvestors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedInvestor, setSelectedInvestor] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    investmentAmount: '',
+    type: 'individual',
+    riskProfile: 'moderate',
+    investmentStage: 'seed',
+    status: 'active',
+    role: 'investor',
+    notes: '',
+  });
+
+  useEffect(() => {
+    fetchInvestors();
+  }, []);
+
+  const fetchInvestors = async () => {
+    try {
+      const res = await fetch('/api/investors');
+      const data = await res.json();
+      setInvestors(data);
+    } catch (error) {
+      toast.error('Failed to fetch investors');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddInvestor = async () => {
+    try {
+      const res = await fetch('/api/investors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          investmentAmount: parseFloat(formData.investmentAmount) || 0,
+          currentValue: parseFloat(formData.investmentAmount) * 1.1 || 0,
+          roi: 10,
+          joinDate: new Date().toISOString().split('T')[0],
+          profilePicture: '/next.svg',
+          portfolio: [{ company: 'Pushpak O2', percentage: 100, invested: parseFloat(formData.investmentAmount) || 0, current: (parseFloat(formData.investmentAmount) || 0) * 1.1 }],
+          communicationLog: [],
+          documents: [],
+          lastContact: new Date().toISOString().split('T')[0],
+          nextFollowUp: '',
+          tags: [],
+        }),
+      });
+      if (res.ok) {
+        toast.success('Investor added successfully');
+        fetchInvestors();
+        setIsAddDialogOpen(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          investmentAmount: '',
+          type: 'individual',
+          riskProfile: 'moderate',
+          investmentStage: 'seed',
+          status: 'active',
+          role: 'investor',
+          notes: '',
+        });
+      } else {
+        const data = await res.json();
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error('Failed to add investor');
+    }
+  };
+
+  const handleEditInvestor = async () => {
+    try {
+      const res = await fetch(`/api/investors/${selectedInvestor._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          investmentAmount: parseFloat(formData.investmentAmount) || 0,
+        }),
+      });
+      if (res.ok) {
+        toast.success('Investor updated successfully');
+        fetchInvestors();
+        setIsEditDialogOpen(false);
+        setSelectedInvestor(null);
+      } else {
+        const data = await res.json();
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error('Failed to update investor');
+    }
+  };
+
+  const handleDeleteInvestor = async () => {
+    try {
+      const res = await fetch(`/api/investors/${selectedInvestor._id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        toast.success('Investor deleted successfully');
+        fetchInvestors();
+        setIsDeleteDialogOpen(false);
+        setSelectedInvestor(null);
+      } else {
+        toast.error('Failed to delete investor');
+      }
+    } catch (error) {
+      toast.error('Failed to delete investor');
+    }
+  };
+
+  const openEditDialog = (investor) => {
+    setSelectedInvestor(investor);
+    setFormData({
+      name: investor.name,
+      email: investor.email,
+      phone: investor.phone,
+      investmentAmount: investor.investmentAmount?.toString() || '',
+      type: investor.type,
+      riskProfile: investor.riskProfile,
+      investmentStage: investor.investmentStage,
+      status: investor.status,
+      role: investor.role,
+      notes: investor.notes,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const openViewDialog = (investor) => {
+    setSelectedInvestor(investor);
+    setIsViewDialogOpen(true);
+  };
+
+  const openDeleteDialog = (investor) => {
+    setSelectedInvestor(investor);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const closeDialogs = () => {
+    setIsAddDialogOpen(false);
+    setIsEditDialogOpen(false);
+    setIsViewDialogOpen(false);
+    setIsDeleteDialogOpen(false);
+    setSelectedInvestor(null);
+  };
+  if (loading) {
+    return <div className="text-center py-8">Loading investors...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Investors Management</h2>
-        <button className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+        <button onClick={() => setIsAddDialogOpen(true)} className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
           <Plus className="w-4 h-4" />
           Add New Investor
         </button>
       </div>
 
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Investor</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Investment</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Current Value</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">ROI</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-700">
-              {mockInvestors.map((investor) => (
-                <tr key={investor.id} className="hover:bg-gray-750">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <img className="h-10 w-10 rounded-full object-cover" src={investor.profilePicture} alt={investor.name} />
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-white">{investor.name}</div>
-                        <div className="text-sm text-gray-400">{investor.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-300 capitalize">{investor.type}</td>
-                  <td className="px-6 py-4 text-sm text-gray-300">${investor.investmentAmount.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-sm text-gray-300">${investor.currentValue.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-sm text-green-400">{investor.roi}%</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      investor.status === 'active' ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'
-                    }`}>
-                      {investor.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <button className="text-blue-400 hover:text-blue-300 transition-colors">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="text-yellow-400 hover:text-yellow-300 transition-colors">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="text-red-400 hover:text-red-300 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <InvestorsTable
+        investors={investors}
+        onView={openViewDialog}
+        onEdit={openEditDialog}
+        onDelete={openDeleteDialog}
+      />
 
-      {/* Investor Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Total Investors</h3>
-          <p className="text-3xl font-bold text-blue-400">{mockInvestors.length}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Active Investors</h3>
-          <p className="text-3xl font-bold text-green-400">{mockInvestors.filter(i => i.status === 'active').length}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Total Investment</h3>
-          <p className="text-3xl font-bold text-yellow-400">${mockInvestors.reduce((sum, i) => sum + i.investmentAmount, 0).toLocaleString()}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Avg ROI</h3>
-          <p className="text-3xl font-bold text-purple-400">{(mockInvestors.reduce((sum, i) => sum + i.roi, 0) / mockInvestors.length).toFixed(1)}%</p>
-        </div>
-      </div>
+      <InvestorsStats investors={investors} />
+
+      <AddInvestorDialog
+        isOpen={isAddDialogOpen}
+        onClose={closeDialogs}
+        onSubmit={handleAddInvestor}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      <EditInvestorDialog
+        isOpen={isEditDialogOpen}
+        onClose={closeDialogs}
+        onSubmit={handleEditInvestor}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      <ViewInvestorDialog
+        isOpen={isViewDialogOpen}
+        onClose={closeDialogs}
+        investor={selectedInvestor}
+      />
+
+      <DeleteDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={closeDialogs}
+        onConfirm={handleDeleteInvestor}
+        title="Delete Investor"
+        itemName={selectedInvestor?.name}
+        itemType="investor"
+      />
     </div>
   );
 }

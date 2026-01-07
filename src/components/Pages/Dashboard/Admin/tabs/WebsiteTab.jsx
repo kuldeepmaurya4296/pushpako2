@@ -5,6 +5,7 @@ import TechnologyManagement from '../components/TechnologyManagement';
 import AboutUsManagement from '../components/AboutUsManagement';
 import ServicesManagement from '../components/ServicesManagement';
 import TeamManagement from '../components/TeamManagement';
+import FooterManagement from '../components/FooterManagement';
 
 export default function WebsiteTab({ activeSubTab, setActiveSubTab }) {
   const renderSubTab = () => {
@@ -19,6 +20,8 @@ export default function WebsiteTab({ activeSubTab, setActiveSubTab }) {
         return <TechnologyManagement />;
       case 'about':
         return <AboutUsManagement />;
+      case 'footer':
+        return <FooterManagement />;
       case 'services':
         return <ServicesManagement />;
       case 'team':

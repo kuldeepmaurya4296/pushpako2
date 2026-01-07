@@ -2,13 +2,10 @@
 import TechnologyPage from "./TechHero";
 
 
-export default function Technologies() {
+export default function TechnologiesClient({ technologies }) {
   return (
-  
-      <main>
-        <TechnologyPage />
-      </main>
-
-   
+    <main>
+      <TechnologyPage technologies={technologies} />
+    </main>
   )
 }

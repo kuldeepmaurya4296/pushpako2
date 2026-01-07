@@ -6,8 +6,51 @@ import { Button } from "@/components/ui/button"
 import { Squares } from "../../ui/square"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function Hero() {
+  const router = useRouter()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userRole, setUserRole] = useState(null)
+  const [userId, setUserId] = useState(null)
+
+  useEffect(() => {
+    // Check if user is authenticated by checking for auth-token cookie
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/check-session', {
+          method: 'GET',
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setIsAuthenticated(true)
+          setUserRole(data.role)
+          setUserId(data.id)
+        }
+      } catch (error) {
+        // User is not authenticated
+        setIsAuthenticated(false)
+      }
+    }
+
+    checkAuth()
+  }, [])
+
+  const handleInvestorPortalClick = () => {
+    if (isAuthenticated) {
+      if (userRole === 'admin') {
+        router.push('/dashboards/admin')
+      } else {
+        router.push(`/dashboards/investors/${userId}`)
+      }
+    } else {
+      router.push('/sign-in')
+    }
+  }
+
   return (
     <section
       id="home"
@@ -111,14 +154,14 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
         >
 
           <Button
             asChild
             variant="hero"
             size="xl"
-            className="group cursor-pointer p-2 px-4 bg-[#07C5EB] border w-4/5 md:w-1/5 text-xl py-2"
+            className="group cursor-pointer p-3 px-6 bg-[#07C5EB] border w-full sm:w-auto min-w-[200px] max-w-[280px] text-lg md:text-xl py-3"
           >
             <Link href="/technologies" className="flex items-center justify-center space-x-3">
               <span>Explore Technology</span>
@@ -128,11 +171,16 @@ export default function Hero() {
 
 
 
-          <Button variant="heroOutline" size="xl" className="group cursor-pointer p-2 px-4 border text-white w-4/5 md:w-1/5 text-xl py-2">
-            <Link href="/sign-in" className="flex items-center justify-center space-x-3">
-            <TrendingUp className="w-5 h-5" />
-            Investor Portal
-            </Link>
+          <Button
+            variant="heroOutline"
+            size="xl"
+            onClick={handleInvestorPortalClick}
+            className="group cursor-pointer p-3 px-6 border text-white w-full sm:w-auto min-w-[200px] max-w-[280px] text-lg md:text-xl py-3 hover:bg-white hover:text-gray-900 transition-colors"
+          >
+            <div className="flex items-center justify-center space-x-3">
+              <TrendingUp className="w-5 h-5" />
+              <span>Investor Portal</span>
+            </div>
           </Button>
         </motion.div>
 

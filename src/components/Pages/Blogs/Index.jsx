@@ -2,33 +2,52 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { mockBlogs, blogCategories, getBlogsByCategory, getRecentBlogs, getPopularBlogs } from '@/lib/mockBlogs';
 import BlogCard from './BlogCard';
 import SearchBar from './SearchBar';
 import CategoryFilter from './CategoryFilter';
 import RecentBlogs from './RecentBlogs';
+import NewsletterSignup from './NewsletterSignup';
 
-export default function Blogs() {
+export default function BlogsClient({ blogs: initialBlogs }) {
+  const [blogs] = useState(initialBlogs || []);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const filteredBlogs = useMemo(() => {
-    let blogs = getBlogsByCategory(activeCategory);
+  // Define categories (you might want to fetch these from API too)
+  const blogCategories = ['All', 'Technology', 'Industry', 'Safety', 'Business', 'Sustainability'];
 
+  const filteredBlogs = useMemo(() => {
+    let filtered = blogs;
+
+    // Filter by category
+    if (activeCategory !== 'All') {
+      filtered = filtered.filter(blog => blog.category === activeCategory);
+    }
+
+    // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      blogs = blogs.filter(blog =>
+      filtered = filtered.filter(blog =>
         blog.title.toLowerCase().includes(query) ||
         blog.excerpt.toLowerCase().includes(query) ||
-        blog.tags.some(tag => tag.toLowerCase().includes(query))
+        (blog.tags && blog.tags.some(tag => tag.toLowerCase().includes(query)))
       );
     }
 
-    return blogs;
-  }, [searchQuery, activeCategory]);
+    return filtered;
+  }, [blogs, searchQuery, activeCategory]);
 
-  const recentBlogs = useMemo(() => getRecentBlogs(3), []);
-  const popularBlogs = useMemo(() => getPopularBlogs(3), []);
+  const recentBlogs = useMemo(() => {
+    return [...blogs]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 3);
+  }, [blogs]);
+
+  const popularBlogs = useMemo(() => {
+    return [...blogs]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 3);
+  }, [blogs]);
 
   return (
     <div className="min-h-screen bg-[#060B18] text-white">
@@ -92,7 +111,7 @@ export default function Blogs() {
                   transition={{ duration: 0.5 }}
                 >
                   {filteredBlogs.map((blog, index) => (
-                    <BlogCard key={blog.id} blog={blog} index={index} />
+                    <BlogCard key={blog._id} blog={blog} index={index} />
                   ))}
                 </motion.div>
               ) : (
@@ -124,20 +143,7 @@ export default function Blogs() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <h3 className="text-lg md:text-xl font-bold text-white mb-4">Stay Updated</h3>
-                <p className="text-gray-300 mb-4 text-sm md:text-base">
-                  Subscribe to our newsletter for the latest updates on aviation technology.
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
-                  />
-                  <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base">
-                    Subscribe
-                  </button>
-                </div>
+                <NewsletterSignup />
               </motion.div>
             </motion.div>
           </div>

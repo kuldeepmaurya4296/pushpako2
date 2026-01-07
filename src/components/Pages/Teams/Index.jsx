@@ -1,10 +1,8 @@
 import TeamPage from "./TeamsPage";
-export default function Teams() {
+export default function TeamsClient({ members }) {
   return (
-
     <main>
-      <TeamPage />
+      <TeamPage members={members} />
     </main>
-
   )
 }
