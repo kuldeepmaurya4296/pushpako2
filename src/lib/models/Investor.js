@@ -67,7 +67,6 @@ const InvestorSchema = new mongoose.Schema(
 )
 
 // Add indexes
-InvestorSchema.index({ email: 1 })
 InvestorSchema.index({ type: 1 })
 InvestorSchema.index({ status: 1 })
 InvestorSchema.index({ investmentStage: 1 })

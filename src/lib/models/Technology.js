@@ -33,7 +33,6 @@ const TechnologySchema = new mongoose.Schema(
 )
 
 // Add indexes
-TechnologySchema.index({ slug: 1 })
 TechnologySchema.index({ category: 1 })
 TechnologySchema.index({ status: 1 })
 TechnologySchema.index({ isFeatured: 1 })

@@ -19,7 +19,7 @@ export async function connectDB() {
   }
 
   await mongoose.connect(uri, {
-    bufferCommands: false,
+    // bufferCommands: true, // default is true
   });
 
   return mongoose.connection;

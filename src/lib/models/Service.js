@@ -47,7 +47,6 @@ const ServiceSchema = new mongoose.Schema(
 )
 
 // Add indexes
-ServiceSchema.index({ slug: 1 })
 ServiceSchema.index({ category: 1 })
 ServiceSchema.index({ status: 1 })
 ServiceSchema.index({ isPopular: 1 })
