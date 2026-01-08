@@ -8,6 +8,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { companyProfile } from "@/lib/data/companyData"
 
 export default function Hero() {
   const router = useRouter()
@@ -63,7 +64,7 @@ export default function Hero() {
 
         <img
           src={'/hero-drone-video.gif'}
-          alt="Pushpak O2 Hydrogen-Electric Aircraft in Flight"
+          alt={`${companyProfile.brandName} Aviation Systems`}
           className="w-full h-auto rounded-2xl shadow-2xl"
         />
         {/* <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/50 via-background/50 to-transparent rounded-b-2xl" /> */}
@@ -122,7 +123,7 @@ export default function Hero() {
             <span className="w-2.5 h-2.5 rounded-full bg-white absolute" />
 
             <span className="text-sm font-semibold tracking-wide text-white">
-              Series A: ₹200 Crores Funding
+              {companyProfile.brandName} - Indigenous Aviation
             </span>
           </div>
         </motion.div>
@@ -135,7 +136,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold  max-w-4xl mx-auto leading-tight"
         >
-          Experience <span className="text-[#07C5EB]">Refined</span> Innovation
+          Redefining the Future of <span className="text-[#07C5EB]">Indian Aviation</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -145,8 +146,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="mt-6 text-lg md:text-xl  max-w-2xl mx-auto leading-relaxed"
         >
-          Hydrogen-electric hybrid passenger drones with AI autonomy for the
-          future of urban and intercity transport
+          {companyProfile.tagline} - Indigenous aviation platforms and intelligent aerial systems designed, engineered, and manufactured in India.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -163,8 +163,8 @@ export default function Hero() {
             size="xl"
             className="group cursor-pointer p-3 px-6 bg-[#07C5EB] border w-full sm:w-auto min-w-[200px] max-w-[280px] text-lg md:text-xl py-3"
           >
-            <Link href="/technologies" className="flex items-center justify-center space-x-3">
-              <span>Explore Technology</span>
+            <Link href="/about-us" className="flex items-center justify-center space-x-3">
+              <span>About Us</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>

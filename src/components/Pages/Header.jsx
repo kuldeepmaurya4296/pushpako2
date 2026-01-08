@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Grip, Menu, X } from "lucide-react"
+import { Grip, Menu, X, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
+import { useSession, signOut } from "next-auth/react"
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -22,6 +23,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef(null)
+  const { data: session, status } = useSession()
 
   // Close menu on scroll
   useEffect(() => {
@@ -70,7 +72,7 @@ export default function Header() {
                 />
               </div>
 
-              <div className="absolute inset-0 rounded-lg bg-primary/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 rounded-lg bg-[#07C5EB]/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             {/* <span className="font-heading font-bold text-lg tracking-wider text-white">
               PUSHPAK O2
@@ -148,20 +150,30 @@ export default function Header() {
               </nav>
 
               {/* Buttons */}
-              <div className="px-6 pb-6 flex gap-3">
-                <Button
-                  className="w-1/2 bg-[#07c5ebd3] hover:bg-[#07c5eb81] border border-white"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </Button>
-                <Button
-                  className="w-1/2 border border-white"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Get Started
-                </Button>
+              <div className="px-6 pb-6 flex gap-3 items-center">
+                {session ? (
+                  <Button
+                    className="w-1/2 bg-red-500 hover:bg-red-600 border border-white flex items-center gap-2"
+                    onClick={() => {
+                      setIsMenuOpen(false)
+                      signOut({ callbackUrl: '/' })
+                    }}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </Button>
+                ) : (
+                  <Link href="/sign-in" className="w-1/2">
+                    <Button
+                      className="w-full bg-[#07c5ebd3] hover:bg-[#07c5eb81] border border-white"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+                )}
               </div>
+
             </motion.aside>
           </>
         )}

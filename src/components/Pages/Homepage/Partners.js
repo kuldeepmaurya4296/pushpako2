@@ -57,7 +57,7 @@ const Partners = () => {
                   key={index}
                   className="flex items-center gap-4 min-w-fit group "
                 >
-                  <div className="w-12 h-12 md:w-24 md:h-24 rounded-xl bg-card border border-border flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-300">
+                  <div className="w-12 h-12 md:w-24 md:h-24 rounded-xl bg-card border border-border flex items-center justify-center group-hover:border-[#07C5EB]/50 group-hover:bg-[#07C5EB]/5 transition-all duration-300">
                     <Icon className="w-12 h-12 md:w-24 md:h-24 text-muted-foreground  transition-colors duration-300" />
                   </div>
                   <div>

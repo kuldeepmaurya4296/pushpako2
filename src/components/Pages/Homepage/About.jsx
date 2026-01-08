@@ -1,30 +1,40 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Clock, Map, Package, Leaf, ArrowRight } from "lucide-react";
+import { Flag, Plane, Shield, Leaf, ArrowRight, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { companyProfile, homepageData } from "@/lib/data/companyData";
+
+const iconMap = {
+  "Flag": Flag,
+  "Plane": Plane,
+  "Drone": Plane,
+  "Shield": Shield,
+  "Leaf": Leaf,
+  "Target": Target,
+};
 
 const highlights = [
   {
-    icon: Clock,
-    label: "5+ Hours Flight Time",
-    description: "Unprecedented endurance versus battery alternatives",
+    icon: Flag,
+    label: "100% Indigenous",
+    description: "Complete in-house development from scratch",
   },
   {
-    icon: Map,
-    label: "300+ km Range",
-    description: "Intercity operations capability",
+    icon: Plane,
+    label: "Aviation Platforms",
+    description: "Fixed-wing and hybrid aircraft designs",
   },
   {
-    icon: Package,
-    label: "400 kg Payload",
-    description: "Industry-leading capacity",
+    icon: Target,
+    label: "UAS Systems",
+    description: "Surveillance & monitoring drones",
   },
   {
-    icon: Leaf,
-    label: "Zero Emissions",
-    description: "Hydrogen fuel cell clean technology",
+    icon: Shield,
+    label: "Compliance Ready",
+    description: "DGCA & safety standards aligned",
   },
 ];
 
@@ -43,8 +53,8 @@ const About = () => {
           >
             <div className="relative rounded-2xl overflow-hidden">
               <img
-                src={`\hero-aircraft.jpg`}
-                alt="Pushpak Aircraft in Flight"
+                src={`/hero-aircraft.jpg`}
+                alt="PushpakO2 Aircraft"
                 className="w-full h-auto object-cover aspect-[4/3]"
               />
               {/* Overlay Gradient */}
@@ -60,12 +70,12 @@ const About = () => {
               className="absolute -bottom-8 right-4 lg:-right-8 bg-card border border-border rounded-xl p-5 shadow-xl w-64 max-w-[calc(100vw-2rem)] lg:max-w-none"
             >
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Leaf className="w-7 h-7 text-primary" />
+                <div className="w-14 h-14 rounded-lg bg-[#07C5EB]/20 flex items-center justify-center">
+                  <Flag className="w-7 h-7 text-[#07C5EB]" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">Zero</p>
-                  <p className="text-sm text-muted-foreground">Carbon Emissions</p>
+                  <p className="text-2xl font-bold text-foreground">100%</p>
+                  <p className="text-sm text-muted-foreground">Made in India</p>
                 </div>
               </div>
             </motion.div>
@@ -78,22 +88,20 @@ const About = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block px-3 py-1 text-xs font-semibold  bg-primary/10 rounded-full mb-4">
-              About Us
+            <span className="inline-block px-3 py-1 text-xs font-semibold bg-[#07C5EB]/10 text-[#07C5EB] rounded-full mb-4">
+              About {companyProfile.brandName}
             </span>
 
-            <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold  mb-4">
-              Experience Advanced <span className="text-gradient">Innovation</span>
+            <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              {companyProfile.tagline.split(' ').slice(0, 3).join(' ')} <span className="text-gradient">{companyProfile.tagline.split(' ').slice(3).join(' ')}</span>
             </h2>
 
             <p className="text-lg text-muted-foreground mb-6">
-              Hydrogen-Electric Hybrid Aircraft with Excellence in Technology & Design
+              Indian Aerospace & Advanced Engineering Company
             </p>
 
             <p className="text-muted-foreground mb-8 leading-relaxed">
-              Pushpak O2 represents a revolutionary approach to urban air mobility,
-              combining hydrogen fuel cell technology with AI-enabled autonomous flight systems.
-              Our aircraft deliver unprecedented performance characteristics:
+              {companyProfile.about.split('.').slice(0, 2).join('.')}. Our core philosophy emphasizes complete in-house development, ensuring full control over design, IP, and manufacturing.
             </p>
 
             {/* Highlights Grid */}
@@ -107,10 +115,10 @@ const About = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="flex items-start gap-3 p-4 rounded-xl bg-card/50 border border-border hover:border-primary/30 transition-colors"
+                    className="flex items-start gap-3 p-4 rounded-xl bg-card/50 border border-border hover:border-[#07C5EB]/30 transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-lg bg-[#07C5EB]/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-[#07C5EB]" />
                     </div>
                     <div>
                       <p className="font-semibold text-white text-sm">{item.label}</p>

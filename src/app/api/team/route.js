@@ -1,8 +1,9 @@
 import { connectDB } from "@/lib/db/connectDB"
 import Team from "@/lib/models/Team"
+import { leadershipTeam } from "@/lib/data/companyData"
 import { NextResponse } from "next/server"
 
-// GET /api/team - Get all team members with optional filtering
+// GET /api/team - Get all team members with optional filtering and fallback to hardcoded data
 export async function GET(request) {
   try {
     await connectDB()
@@ -25,10 +26,31 @@ export async function GET(request) {
 
     const team = await Team.find(query).sort({ order: 1 })
 
+    // If no team members found in database, return hardcoded leadership data
+    if (team.length === 0) {
+      console.log("No team members in database, returning hardcoded leadership data")
+
+      // Filter hardcoded data based on query params
+      let filteredTeam = [...leadershipTeam]
+
+      if (department && department !== 'all') {
+        filteredTeam = filteredTeam.filter(member => member.department === department)
+      }
+
+      if (active === 'true') {
+        filteredTeam = filteredTeam.filter(member => member.isActive === true)
+      } else if (active === 'false') {
+        filteredTeam = filteredTeam.filter(member => member.isActive === false)
+      }
+
+      return NextResponse.json(filteredTeam)
+    }
+
     return NextResponse.json(team)
   } catch (error) {
-    console.error(error)
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    console.error("Database error, returning hardcoded data:", error)
+    // Return hardcoded data on database error
+    return NextResponse.json(leadershipTeam)
   }
 }
 

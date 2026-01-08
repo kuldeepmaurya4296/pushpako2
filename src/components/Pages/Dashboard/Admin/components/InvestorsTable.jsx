@@ -19,8 +19,8 @@ export default function InvestorsTable({ investors, onView, onEdit, onDelete }) 
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
-            {investors.map((investor) => (
-              <tr key={investor.id} className="hover:bg-gray-750">
+            {investors.map((investor, index) => (
+              <tr key={investor._id || index} className="hover:bg-gray-750">
                 <td className="px-6 py-4">
                   <div className="flex items-center">
                     <img className="h-10 w-10 rounded-full object-cover" src={investor.profilePicture} alt={investor.name} />
@@ -37,9 +37,8 @@ export default function InvestorsTable({ investors, onView, onEdit, onDelete }) 
                 <td className="px-6 py-4 text-sm text-gray-300">${investor.currentValue?.toLocaleString() || 0}</td>
                 <td className="px-6 py-4 text-sm text-green-400">{investor.roi || 0}%</td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    investor.status === 'active' ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'
-                  }`}>
+                  <span className={`px-2 py-1 text-xs rounded-full ${investor.status === 'active' ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'
+                    }`}>
                     {investor.status}
                   </span>
                 </td>

@@ -1,8 +1,9 @@
 import { connectDB } from "@/lib/db/connectDB"
 import AboutUs from "@/lib/models/AboutUs"
+import { aboutUsPageData } from "@/lib/data/companyData"
 import { NextResponse } from "next/server"
 
-// GET /api/about-us - Get about us content
+// GET /api/about-us - Get about us content with fallback to hardcoded data
 export async function GET() {
   try {
     await connectDB()
@@ -11,13 +12,34 @@ export async function GET() {
     const aboutUs = await AboutUs.findOne()
 
     if (!aboutUs) {
-      return NextResponse.json({ error: "About us content not found" }, { status: 404 })
+      // Return hardcoded data as fallback
+      console.log("No database data found, returning hardcoded data")
+      return NextResponse.json(aboutUsPageData)
     }
 
-    return NextResponse.json(aboutUs)
+    // Merge database data with hardcoded data for any missing fields
+    const mergedData = {
+      ...aboutUsPageData,
+      ...aboutUs.toObject(),
+      hero: {
+        ...aboutUsPageData.hero,
+        ...(aboutUs.hero || {}),
+      },
+      vision: {
+        ...aboutUsPageData.vision,
+        ...(aboutUs.vision || {}),
+      },
+      mission: aboutUs.mission?.items?.length > 0 ? aboutUs.mission : aboutUsPageData.mission,
+      values: aboutUs.values?.length > 0 ? aboutUs.values : aboutUsPageData.values,
+      corePhilosophy: aboutUs.corePhilosophy?.length > 0 ? aboutUs.corePhilosophy : aboutUsPageData.corePhilosophy,
+      stats: aboutUs.stats?.length > 0 ? aboutUs.stats : aboutUsPageData.stats,
+    }
+
+    return NextResponse.json(mergedData)
   } catch (error) {
-    console.error(error)
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    console.error("Database error, returning hardcoded data:", error)
+    // Return hardcoded data on database error
+    return NextResponse.json(aboutUsPageData)
   }
 }
 
@@ -53,7 +75,12 @@ export async function PUT(request) {
     }
 
     // Optional: Add specific validation for allowed fields
-    const allowedSections = ['hero', 'vision', 'values', 'footer', 'stats']
+    const allowedSections = [
+      'hero', 'vision', 'mission', 'values', 'corePhilosophy',
+      'keyDomains', 'technologyCapabilities', 'makeInIndiaCommitment',
+      'regulatoryCompliance', 'footer', 'stats', 'companyName',
+      'brandName', 'tagline'
+    ]
     const providedSections = Object.keys(data)
 
     // Check if all provided keys are allowed sections
