@@ -113,7 +113,7 @@ export default function Footer() {
           {/* BRAND COLUMN */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center relative">
+              <div className="w-10 h-10 rounded-lg bg-[#07C5EB]/20 flex items-center justify-center relative">
                 <Image
                   src="/pushpako2.png"
                   alt="logo"

@@ -7,6 +7,17 @@ const ValueSchema = new mongoose.Schema({
   icon: String,
 })
 
+const PhilosophySchema = new mongoose.Schema({
+  id: String,
+  title: String,
+  description: String,
+})
+
+const MissionItemSchema = new mongoose.Schema({
+  id: String,
+  text: String,
+})
+
 const SocialLinkSchema = new mongoose.Schema({
   platform: String,
   url: String,
@@ -42,8 +53,22 @@ const StatSchema = new mongoose.Schema({
   suffix: String,
 })
 
+const DomainSchema = new mongoose.Schema({
+  id: String,
+  title: String,
+  description: String,
+  items: [String],
+  icon: String,
+})
+
 const AboutUsSchema = new mongoose.Schema(
   {
+    // Company Basic Info
+    companyName: { type: String, default: "PushpakO2 Private Initiative" },
+    brandName: { type: String, default: "PushpakO2" },
+    tagline: { type: String, default: "Redefining the Future of Indian Aviation & Aerospace Systems" },
+
+    // Hero Section
     hero: {
       id: { type: String, default: "hero" },
       title: String,
@@ -53,6 +78,8 @@ const AboutUsSchema = new mongoose.Schema(
       ctaText: String,
       ctaLink: String,
     },
+
+    // Vision Section
     vision: {
       id: { type: String, default: "vision" },
       title: String,
@@ -60,8 +87,44 @@ const AboutUsSchema = new mongoose.Schema(
       extendedContent: String,
       image: String,
     },
+
+    // Mission Section
+    mission: {
+      id: { type: String, default: "mission" },
+      title: String,
+      items: [String],
+    },
+
+    // Core Values
     values: [ValueSchema],
+
+    // Core Philosophy
+    corePhilosophy: [PhilosophySchema],
+
+    // Key Domains
+    keyDomains: [DomainSchema],
+
+    // Technology Capabilities
+    technologyCapabilities: [String],
+
+    // Make in India Commitment
+    makeInIndiaCommitment: {
+      title: String,
+      description: String,
+      points: [String],
+    },
+
+    // Regulatory Compliance
+    regulatoryCompliance: {
+      title: String,
+      description: String,
+      standards: [String],
+    },
+
+    // Footer
     footer: FooterSchema,
+
+    // Stats
     stats: [StatSchema],
   },
   { timestamps: true }

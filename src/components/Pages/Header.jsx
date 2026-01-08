@@ -72,7 +72,7 @@ export default function Header() {
                 />
               </div>
 
-              <div className="absolute inset-0 rounded-lg bg-primary/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 rounded-lg bg-[#07C5EB]/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             {/* <span className="font-heading font-bold text-lg tracking-wider text-white">
               PUSHPAK O2
