@@ -15,28 +15,33 @@ export function middleware(request) {
       return NextResponse.redirect(signInUrl);
     }
 
-    // Check role-based access
-    if (pathname.startsWith('/dashboards/admin') && decoded.role !== 'admin') {
-      const investorUrl = new URL(`/dashboards/investors/${decoded.id}`, request.url);
-      return NextResponse.redirect(investorUrl);
+    // Role: ADMIN
+    if (decoded.role === 'admin') {
+      // Admins can ONLY access /dashboards/admin
+      if (!pathname.startsWith('/dashboards/admin')) {
+        return NextResponse.redirect(new URL('/dashboards/admin', request.url));
+      }
+      return NextResponse.next();
     }
 
-    if (pathname.startsWith('/dashboards/investors/')) {
-      if (decoded.role === 'admin') {
-        // Admins can access any investor dashboard
-        return NextResponse.next();
-      } else if (decoded.role === 'investor') {
-        // Investors can only access their own dashboard
-        const investorId = pathname.split('/dashboards/investors/')[1].split('/')[0];
-        if (investorId !== decoded.id) {
-          const ownUrl = new URL(`/dashboards/investors/${decoded.id}`, request.url);
-          return NextResponse.redirect(ownUrl);
-        }
-      } else {
-        const adminUrl = new URL('/dashboards/admin', request.url);
-        return NextResponse.redirect(adminUrl);
+    // Role: INVESTOR
+    if (decoded.role === 'investor') {
+      // Investors can only access /dashboards/investors/[their-id]
+      if (pathname.startsWith('/dashboards/admin')) {
+        return NextResponse.redirect(new URL(`/dashboards/investors/${decoded.id}`, request.url));
       }
+
+      if (pathname.startsWith('/dashboards/investors/')) {
+        const pathId = pathname.split('/dashboards/investors/')[1]?.split('/')[0];
+        if (pathId !== decoded.id) {
+          return NextResponse.redirect(new URL(`/dashboards/investors/${decoded.id}`, request.url));
+        }
+      }
+      return NextResponse.next();
     }
+
+    // Fallback for unknown roles
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
   return NextResponse.next();
