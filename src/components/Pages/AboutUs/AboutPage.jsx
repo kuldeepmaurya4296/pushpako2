@@ -237,8 +237,10 @@ export default function AboutPage() {
                                 whileInView="visible"
                                 viewport={{ once: true }}
                                 custom={i}
-                                className="p-6 rounded-2xl bg-card border border-border hover:border-[#07C5EB]/30 transition-all duration-300"
+                                className="p-6 bg-[#060B18]/80 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:border-[#07C5EB]/30 transition-all duration-300"
                             >
+                                <div className="absolute -inset-0.5 bg-gradient-to-b from-[#07C5EB]/50 to-transparent rounded-2xl blur opacity-0 group-hover:opacity-20 transition duration-500" />
+
                                 <div className="w-10 h-10 rounded-lg bg-[#07C5EB]/10 flex items-center justify-center mb-4">
                                     <CheckCircle className="w-5 h-5 text-[#07C5EB]" />
                                 </div>
@@ -289,22 +291,22 @@ export default function AboutPage() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     custom={i}
-                                    className={`p-8 rounded-2xl bg-card border transition-all duration-300 hover:shadow-xl ${isBlue
-                                            ? "border-[#07C5EB]/20 hover:border-[#07C5EB]/50"
-                                            : "border-border hover:border-foreground/30"
+                                    className={`p-8 rounded-2xl bg-card/10 border transition-all duration-300 hover:shadow-xl ${isBlue
+                                        ? "border-[#07C5EB]/20 hover:border-[#07C5EB]/50"
+                                        : "border-border hover:border-foreground/30"
                                         }`}
                                 >
                                     <div
                                         className={`w-14 h-14 rounded-xl flex items-center justify-center mb-5 ${isBlue
-                                                ? "bg-[#07C5EB]/10 text-[#07C5EB]"
-                                                : "bg-foreground/10 text-foreground"
+                                            ? "bg-[#07C5EB]/10 text-[#07C5EB]"
+                                            : "bg-foreground/10 text-gray-300"
                                             }`}
                                     >
                                         <Icon className="w-7 h-7" />
                                     </div>
 
                                     <h3
-                                        className={`font-heading text-xl font-semibold mb-4 ${isBlue ? "text-[#07C5EB]" : "text-foreground"
+                                        className={`font-heading text-xl font-semibold mb-4 ${isBlue ? "text-[#07C5EB]" : "text-gray-300"
                                             }`}
                                     >
                                         {domain.title}
@@ -313,7 +315,7 @@ export default function AboutPage() {
                                     <ul className="space-y-2">
                                         {domain.items.map((item, idx) => (
                                             <li key={idx} className="flex items-start gap-2 text-sm text-gray-400">
-                                                <CheckCircle className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" />
+                                                <CheckCircle className="w-4 h-4 text-gray-300 mt-0.5 shrink-0" />
                                                 <span>{item}</span>
                                             </li>
                                         ))}
@@ -411,7 +413,7 @@ export default function AboutPage() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     custom={index}
-                                    className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border"
+                                    className="flex items-start gap-3 p-4 rounded-xl bg-card/10 border border-border"
                                 >
                                     <CheckCircle className="w-5 h-5 text-[#07C5EB] mt-0.5 shrink-0" />
                                     <span className="text-gray-300 text-sm">{point}</span>
@@ -453,9 +455,9 @@ export default function AboutPage() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     custom={index}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/10 border border-border"
                                 >
-                                    <Award className="w-4 h-4 text-primary" />
+                                    <Award className="w-4 h-4 text-white" />
                                     <span className="text-gray-300 text-sm">{standard}</span>
                                 </motion.div>
                             ))}
@@ -490,28 +492,28 @@ export default function AboutPage() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     custom={i}
-                                    className={`p-8 rounded-2xl bg-card border transition-all duration-300 hover:shadow-xl ${isBlue
-                                            ? "border-[#07C5EB]/20 hover:border-[#07C5EB]/50"
-                                            : "border-border hover:border-foreground/30"
+                                    className={`p-8 rounded-2xl bg-card/10 border transition-all duration-300 hover:shadow-xl ${isBlue
+                                        ? "border-[#07C5EB]/20 hover:border-[#07C5EB]/50"
+                                        : "border-border hover:border-foreground/30"
                                         }`}
                                 >
                                     <div
                                         className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${isBlue
-                                                ? "bg-[#07C5EB]/10 text-[#07C5EB]"
-                                                : "bg-foreground/10 text-foreground"
+                                            ? "bg-[#07C5EB]/10 text-[#07C5EB]"
+                                            : "bg-foreground/10 text-gray-300"
                                             }`}
                                     >
                                         <Icon className="w-6 h-6" />
                                     </div>
 
                                     <h3
-                                        className={`font-heading text-xl font-semibold mb-3 ${isBlue ? "text-[#07C5EB]" : "text-foreground"
+                                        className={`font-heading text-xl font-semibold mb-3 ${isBlue ? "text-[#07C5EB]" : "text-gray-300"
                                             }`}
                                     >
                                         {item.title}
                                     </h3>
 
-                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                    <p className="text-sm text-gray-300 leading-relaxed">
                                         {item.description}
                                     </p>
                                 </motion.div>
@@ -587,11 +589,11 @@ export default function AboutPage() {
                             asChild
                             variant="outline"
                             size="xl"
-                            className="group cursor-pointer p-2 px-6 border text-xl py-2"
+                            className="group cursor-pointer p-2 px-6 border text-xl py-2 bg-card/10 hover:bg-card/30 hover:border-[#07C5EB]/20 transition-all duration-300 hover:text-white"
                         >
                             <Link href="/services" className="flex items-center justify-center space-x-3">
                                 <span>Explore Services</span>
-                                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1 duration-300 " />
                             </Link>
                         </Button>
                     </div>
