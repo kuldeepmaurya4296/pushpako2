@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import OverviewTab from './tabs/OverviewTab';
 import InvestorsTab from './tabs/InvestorsTab';
@@ -46,7 +47,7 @@ export default function AdminDashboard() {
               try {
                 await fetch('/api/auth/logout', { method: 'POST' });
                 toast.success('Logged out successfully');
-                router.push('/sign-in');
+                signOut({ callbackUrl: '/sign-in' });
               } catch (error) {
                 toast.error('Logout failed');
               }
