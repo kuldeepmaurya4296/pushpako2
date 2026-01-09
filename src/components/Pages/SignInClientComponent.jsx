@@ -22,7 +22,11 @@ export default function SignInClientComponent() {
             if (session?.user) {
                 try {
                     // Sync the NextAuth session with our custom auth-token
-                    await fetch('/api/auth/sync-session', { method: 'POST' });
+                    const response = await fetch('/api/auth/sync-session', { method: 'POST' });
+
+                    if (!response.ok) {
+                        throw new Error('Session sync failed');
+                    }
 
                     if (session.user.role === 'admin') {
                         window.location.href = '/dashboards/admin';
@@ -31,7 +35,10 @@ export default function SignInClientComponent() {
                     }
                 } catch (error) {
                     console.error('Session sync failed:', error);
-                    toast.error('Authentication failed. Please try again.');
+                    // Do not redirect if sync fails. The user can try signing in again.
+                    // Optionally signOut() to clear the potentially stuck NextAuth session
+                    // signOut({ redirect: false }); 
+                    toast.error('Authentication synchronization failed. Please refresh or try again.');
                 }
             }
         };
