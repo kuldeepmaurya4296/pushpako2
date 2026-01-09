@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
 
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   // Check if the path requires authentication
   if (pathname.startsWith('/dashboards/')) {
     const token = getTokenFromRequest(request);
-    const decoded = verifyToken(token);
+    const decoded = await verifyToken(token);
 
     if (!decoded) {
       // Redirect to sign-in if not authenticated

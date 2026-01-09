@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { leadershipTeam, foundingLeadershipApproach } from "@/lib/data/companyData";
+import LeaderCard from "../Teams/components/LeaderCard";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 24 },
@@ -60,47 +61,11 @@ const Leadership = () => {
                 </div>
 
                 {/* Leadership Cards */}
-                <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
                     {leadershipTeam.map((member, index) => (
-                        <motion.div
-                            key={member.id}
-                            variants={fadeUp}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            custom={index}
-                            className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-[#07C5EB]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#07C5EB]/10 group relative overflow-hidden"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#07C5EB]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                            <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
-                                {/* Profile Image */}
-                                <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#07C5EB]/30 shrink-0 group-hover:border-[#07C5EB] transition-colors duration-300">
-                                    <Image
-                                        // src={member.image || "/placeholder-avatar.jpg"}
-                                        src={"/placeholder-avatar.jpg"}
-
-                                        alt={member.name}
-                                        fill
-                                        className="object-cover"
-                                        sizes="96px"
-                                    />
-                                </div>
-
-                                {/* Info */}
-                                <div className="flex-1 text-center md:text-left">
-                                    <h3 className="text-2xl font-bold gray-300 mb-1">
-                                        {member.name}
-                                    </h3>
-                                    <p className="text-[#07C5EB] font-medium mb-3">
-                                        {member.role}
-                                    </p>
-                                    <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                                        {member.bio}
-                                    </p>
-                                </div>
-                            </div>
-                        </motion.div>
+                        <div key={member.id} className="h-64 sm:h-80 md:h-[28rem]">
+                            <LeaderCard member={member} index={index} hideBio={true} />
+                        </div>
                     ))}
                 </div>
 
@@ -129,7 +94,7 @@ const Leadership = () => {
 
                         <div className="flex-1 grid gap-3 w-full">
                             {foundingLeadershipApproach.points.map((point, index) => (
-                                <div key={index} className="flex items-center gap-3 bg-background/50 p-3 rounded-lg border border-white/5">
+                                <div key={index} className="flex items-center gap-3 bg-background/10 p-3 rounded-lg border border-white/5">
                                     <CheckCircle className="w-5 h-5 text-[#07C5EB] shrink-0" />
                                     <span className="text-gray-300 text-sm font-medium">{point}</span>
                                 </div>
@@ -152,7 +117,7 @@ const Leadership = () => {
                         size="xl"
                         className="group text-white cursor-pointer bg-[#07C5EB] hover:bg-[#07C5EB]/90 border-0"
                     >
-                        <Link href="/our-team" className="flex items-center gap-2 p-2">
+                        <Link href="/our-team" className="flex items-center gap-2 p-2 cursor-pointer">
                             <span>View Full Team</span>
                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                         </Link>

@@ -1,8 +1,10 @@
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
-export function verifyToken(token) {
+export async function verifyToken(token) {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secret');
+    const { payload } = await jwtVerify(token, secret);
+    return payload;
   } catch (error) {
     return null;
   }
