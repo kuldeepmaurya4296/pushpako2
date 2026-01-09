@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import BlogDetail from '@/components/Pages/Blogs/BlogDetail';
 
+export const dynamic = 'force-dynamic';
+
 async function getBlog(id) {
   try {
     // Try to fetch by slug first, then by ID if it's a valid ObjectId

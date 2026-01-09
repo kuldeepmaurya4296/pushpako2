@@ -8,13 +8,35 @@ import CategoryFilter from './CategoryFilter';
 import RecentBlogs from './RecentBlogs';
 import NewsletterSignup from './NewsletterSignup';
 
-export default function BlogsClient({ blogs: initialBlogs }) {
-  const [blogs] = useState(initialBlogs || []);
+export default function BlogsClient({ initialBlogs, totalCount: initialTotalCount, initialLimit }) {
+  const [blogs, setBlogs] = useState(initialBlogs || []);
+  const [loading, setLoading] = useState(false);
+  const [totalCount, setTotalCount] = useState(initialTotalCount || 0);
+  const [page, setPage] = useState(1);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
   // Define categories (you might want to fetch these from API too)
   const blogCategories = ['All', 'Technology', 'Industry', 'Safety', 'Business', 'Sustainability'];
+
+  const handleLoadMore = async () => {
+    setLoading(true);
+    try {
+      const nextPage = page + 1;
+      const res = await fetch(`/api/blogs?page=${nextPage}&limit=${initialLimit}&published=true`);
+      const data = await res.json();
+
+      if (data.blogs && data.blogs.length > 0) {
+        setBlogs(prev => [...prev, ...data.blogs]);
+        setPage(nextPage);
+      }
+    } catch (error) {
+      console.error("Failed to load more blogs", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredBlogs = useMemo(() => {
     let filtered = blogs;
@@ -134,7 +156,9 @@ export default function BlogsClient({ blogs: initialBlogs }) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <RecentBlogs blogs={recentBlogs} title="Recent Posts" />
+              {/* Only show recent/popular from loaded blogs or fetch specific widget data later. 
+                  For MVP using loaded blogs is acceptable approximation or we could fetch purely recent/popular from API */}
+              <RecentBlogs blogs={filteredBlogs} title="Recent Posts" />
               <RecentBlogs blogs={popularBlogs} title="Popular Posts" />
 
               {/* Newsletter Signup */}
@@ -147,6 +171,23 @@ export default function BlogsClient({ blogs: initialBlogs }) {
               </motion.div>
             </motion.div>
           </div>
+
+          {/* Load More Button */}
+          {blogs.length < totalCount && (
+            <div className="flex justify-center mt-12">
+              <button
+                onClick={handleLoadMore}
+                disabled={loading}
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold transition-all shadow-lg hover:shadow-blue-500/30 flex items-center gap-2 disabled:opacity-50"
+              >
+                {loading ? (
+                  <>Processing...</>
+                ) : (
+                  <>Load More Articles</>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </div>
