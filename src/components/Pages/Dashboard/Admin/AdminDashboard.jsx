@@ -51,7 +51,7 @@ export default function AdminDashboard() {
                 toast.error('Logout failed');
               }
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             Logout
