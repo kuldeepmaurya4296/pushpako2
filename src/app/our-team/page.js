@@ -13,7 +13,7 @@ export default async function page() {
 
   try {
     await connectDB();
-    const dbMembers = await Team.find({ isActive: true }).sort({ order: 1 }).lean();
+    const dbMembers = await Team.find({}).sort({ order: 1 }).lean();
 
     if (dbMembers && dbMembers.length > 0) {
       members = JSON.parse(JSON.stringify(dbMembers));

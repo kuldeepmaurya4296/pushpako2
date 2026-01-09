@@ -72,20 +72,11 @@ export default function TeamManagement() {
 
       const teamMemberData = {
         name: memberData.name,
-        email: memberData.email,
         role: memberData.position,
         bio: memberData.bio,
-        fullBio: memberData.fullBio || memberData.bio,
         image: memberData.image,
-        linkedin: memberData.linkedin,
-        twitter: memberData.twitter,
-        github: memberData.github,
         department: memberData.department || 'Executive',
-        responsibilities: memberData.responsibilities || [],
-        joinDate: memberData.joinDate || new Date().toISOString().split('T')[0],
-        location: memberData.location || '',
-        isActive: true,
-        order: memberData.order || team.length + 1,
+        order: memberData.order ? parseInt(memberData.order) : 99,
       };
 
       if (selectedMember && selectedMember._id) {
@@ -234,7 +225,6 @@ export default function TeamManagement() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Member</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Role</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Department</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -251,18 +241,11 @@ export default function TeamManagement() {
                       />
                       <div className="ml-4">
                         <div className="text-sm font-medium text-white">{member.name}</div>
-                        <div className="text-sm text-gray-400">{member.email}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-300">{member.role}</td>
                   <td className="px-6 py-4 text-sm text-gray-300">{member.department}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${member.isActive ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'
-                      }`}>
-                      {member.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center gap-2">
                       <button
@@ -308,14 +291,10 @@ export default function TeamManagement() {
       )}
 
       {/* Team Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Total Members</h3>
           <p className="text-3xl font-bold text-blue-400">{team.length}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Active Members</h3>
-          <p className="text-3xl font-bold text-green-400">{team.filter(m => m.isActive).length}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Departments</h3>
@@ -344,9 +323,6 @@ export default function TeamManagement() {
         member={selectedMember ? {
           ...selectedMember,
           position: selectedMember.role,
-          phone: selectedMember.phone || '',
-          fullBio: selectedMember.fullBio || selectedMember.bio,
-          responsibilities: selectedMember.responsibilities || [],
         } : null}
         saving={saving}
       />
@@ -357,13 +333,6 @@ export default function TeamManagement() {
         member={selectedMember ? {
           ...selectedMember,
           position: selectedMember.role,
-          phone: selectedMember.phone || '',
-          fullBio: selectedMember.fullBio || selectedMember.bio,
-          socialLinks: {
-            linkedin: selectedMember.linkedin,
-            twitter: selectedMember.twitter,
-            github: selectedMember.github,
-          },
         } : null}
       />
 

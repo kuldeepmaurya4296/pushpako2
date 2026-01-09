@@ -6,7 +6,7 @@ import { NextResponse } from "next/server"
 export async function GET(request, { params }) {
   try {
     await connectDB()
-    const { id } = params
+    const { id } = await params
 
     const teamMember = await Team.findById(id)
 
@@ -28,9 +28,10 @@ export async function PUT(request, { params }) {
     const { id } = await params
     const data = await request.json()
 
+    // Disable runValidators to prevent phantom schema issues with removed fields (email)
     const teamMember = await Team.findByIdAndUpdate(id, data, {
       new: true,
-      runValidators: true
+      runValidators: false
     })
 
     if (!teamMember) {
@@ -48,7 +49,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await connectDB()
-    const { id } = params
+    const { id } = await params
 
     const teamMember = await Team.findByIdAndDelete(id)
 

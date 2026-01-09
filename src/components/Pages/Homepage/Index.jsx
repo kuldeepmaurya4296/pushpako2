@@ -6,13 +6,13 @@ import Partners from "./Partners";
 import { Stats } from "./Stats";
 import Technology from "./Technology";
 
-export default function Home() {
+export default function Home({ teamData }) {
   return (
     <main>
       <Hero />
       <Partners />
       <About />
-      <Leadership />
+      <Leadership teamData={teamData} />
       <Technology />
       {/* <Fleet /> */}
       <Benefits />

@@ -17,7 +17,17 @@ const fadeUp = {
     }),
 };
 
-const Leadership = () => {
+const Leadership = ({ teamData }) => {
+    // If dynamic data is passed, filter/use it. Otherwise fallback to hardcoded (handled in page.js but redundant safety here).
+    // Logic: If we have explicit 'order' 1 and 2, those are founders. Or just take first 2.
+    // User wants "Founder Order 1 and 2". 
+    // Usually 'teamData' passed from page.js is already sorted by order.
+    // But 'teamData' contains ALL members. We only want to show 2 Founders here.
+
+    const founders = teamData && teamData.length > 0
+        ? teamData.slice(0, 2) // Assume top 2 are founders
+        : leadershipTeam.slice(0, 2);
+
     return (
         <section id="leadership" className="py-24 bg-background-darker relative overflow-hidden">
             {/* Background Effects */}
@@ -62,8 +72,8 @@ const Leadership = () => {
 
                 {/* Leadership Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
-                    {leadershipTeam.map((member, index) => (
-                        <div key={member.id} className="h-64 sm:h-80 md:h-[28rem]">
+                    {founders.map((member, index) => (
+                        <div key={member.id || member._id} className="h-64 sm:h-80 md:h-[28rem]">
                             <LeaderCard member={member} index={index} hideBio={true} />
                         </div>
                     ))}
