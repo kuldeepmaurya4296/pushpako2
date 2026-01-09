@@ -35,16 +35,19 @@ export default function SignInClientComponent() {
                     }
                 } catch (error) {
                     console.error('Session sync failed:', error);
-                    // Do not redirect if sync fails. The user can try signing in again.
-                    // Optionally signOut() to clear the potentially stuck NextAuth session
-                    // signOut({ redirect: false }); 
-                    toast.error('Authentication synchronization failed. Please refresh or try again.');
+                    toast.error(`Sync failed: ${error.message}`);
+                    setLoading(false);
                 }
             }
         };
 
         syncAndRedirect();
     }, [session, router]);
+
+    const handleSignOut = async () => {
+        await fetch('/api/auth/signout', { method: 'POST' }); // Ensure local cleanup if needed
+        window.location.href = '/api/auth/signout'; // Force NextAuth signout
+    };
 
     const handleChange = (e) => {
         setFormData({
@@ -138,9 +141,19 @@ export default function SignInClientComponent() {
             {/* Right Side - Form */}
             <div className="w-full md:w-1/2 flex items-center justify-center p-6">
                 <div className="w-full max-w-md">
-                    <h1 className="text-3xl font-bold text-gray-300 mb-2">
-                        {isSignIn ? 'Sign In' : 'Create Account'}
-                    </h1>
+                    <div className="flex justify-between items-center mb-2">
+                        <h1 className="text-3xl font-bold text-gray-300">
+                            {isSignIn ? 'Sign In' : 'Create Account'}
+                        </h1>
+                        {session && (
+                            <button
+                                onClick={handleSignOut}
+                                className="text-xs text-red-400 border border-red-400 px-2 py-1 rounded hover:bg-red-400/10"
+                            >
+                                Force Sign Out
+                            </button>
+                        )}
+                    </div>
                     <p className="text-gray-400 mb-8">
                         {isSignIn
                             ? "Don't have an account? "
