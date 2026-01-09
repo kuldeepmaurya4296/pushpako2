@@ -13,7 +13,7 @@ const TeamSchema = new mongoose.Schema(
     image: String,
     department: {
       type: String,
-      enum: ["Executive", "Technology", "Engineering", "Operations", "Safety", "Marketing", "Sales"],
+      enum: ["Executive", "Technology", "Engineering", "Operations", "Safety", "Marketing", "Sales", "IT"],
       required: true
     },
     order: { type: Number, default: 99 },
