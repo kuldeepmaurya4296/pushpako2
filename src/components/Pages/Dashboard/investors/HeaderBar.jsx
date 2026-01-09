@@ -2,6 +2,7 @@
 import { LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 export default function HeaderBar({ investor, onProfileAction }) {
@@ -54,8 +55,9 @@ export default function HeaderBar({ investor, onProfileAction }) {
                 try {
                   await fetch('/api/auth/logout', { method: 'POST' });
                   toast.success('Logged out successfully');
-                  router.push('/sign-in');
+                  signOut({ callbackUrl: '/sign-in' });
                 } catch (error) {
+                  console.error(error);
                   toast.error('Logout failed');
                 }
               }}
