@@ -23,13 +23,13 @@ export default function RecentBlogs({ blogs, title = "Recent Posts" }) {
       <div className="space-y-3 md:space-y-4">
         {blogs.map((blog, index) => (
           <motion.div
-            key={blog.id}
+            key={blog._id || index}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
           >
             <Link
-              href={`/blogs/${blog.id}`}
+              href={`/blogs/${blog.slug || blog._id}`}
               className="block group"
             >
               <motion.div
@@ -49,7 +49,7 @@ export default function RecentBlogs({ blogs, title = "Recent Posts" }) {
                   <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-400">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      <span>{formatDate(blog.publishedAt)}</span>
+                      <span>{formatDate(blog.createdAt)}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />

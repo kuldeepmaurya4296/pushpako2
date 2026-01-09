@@ -1,6 +1,8 @@
 import { connectDB } from "@/lib/db/connectDB"
 import Blog from "@/lib/models/Blog"
 import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 // GET /api/blogs/[id] - Get a single blog by ID or slug
 export async function GET(request, { params }) {
@@ -32,11 +34,31 @@ export async function GET(request, { params }) {
 // PUT /api/blogs/[id] - Update a blog
 export async function PUT(request, { params }) {
   try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     await connectDB()
     const { id } = await params
     const data = await request.json()
 
-    // Generate new slug if title changed
+    // Find blog to check ownership
+    const existingBlog = await Blog.findById(id)
+    if (!existingBlog) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 })
+    }
+
+    // Check ownership (allow Admin or Author)
+    if (session.user.id !== existingBlog.authorId && session.user.role !== 'admin') {
+      return NextResponse.json({ error: "Forbidden: You do not own this blog" }, { status: 403 })
+    }
+
+    // Prevent Author spoofing
+    delete data.authorId;
+    delete data.author;
+
+    // Update slug if title changed
     if (data.title && !data.slug) {
       data.slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
     }
@@ -45,10 +67,6 @@ export async function PUT(request, { params }) {
       new: true,
       runValidators: true
     })
-
-    if (!blog) {
-      return NextResponse.json({ error: "Blog not found" }, { status: 404 })
-    }
 
     return NextResponse.json(blog)
   } catch (error) {

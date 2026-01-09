@@ -1,6 +1,8 @@
 import { connectDB } from "@/lib/db/connectDB"
 import Blog from "@/lib/models/Blog"
 import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 // GET /api/blogs - Get all blogs with optional filtering
 export async function GET(request) {
@@ -11,6 +13,7 @@ export async function GET(request) {
     const category = searchParams.get('category')
     const featured = searchParams.get('featured')
     const published = searchParams.get('published')
+    const search = searchParams.get('search')
     const limit = parseInt(searchParams.get('limit')) || 0
     const page = parseInt(searchParams.get('page')) || 1
     const skip = (page - 1) * limit
@@ -27,6 +30,16 @@ export async function GET(request) {
 
     if (published === 'true') {
       query.isPublished = true
+    }
+
+    if (search) {
+      const searchRegex = { $regex: search, $options: 'i' }
+      query.$or = [
+        { title: searchRegex },
+        { excerpt: searchRegex },
+        { tags: searchRegex },
+        { author: searchRegex }
+      ]
     }
 
     const blogs = await Blog.find(query)
@@ -51,8 +64,22 @@ export async function GET(request) {
 // POST /api/blogs - Create a new blog
 export async function POST(request) {
   try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     await connectDB()
     const data = await request.json()
+
+    // Override author info with session data
+    data.author = session.user.name || "Anonymous"
+    data.authorId = session.user.id
+
+    // Default fallback if not provided
+    if (!data.authorId) {
+      return NextResponse.json({ error: "Unable to determine author" }, { status: 400 })
+    }
 
     // Generate slug if not provided
     if (!data.slug) {
