@@ -22,7 +22,7 @@ export default function LeadershipApproach({ data }) {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto bg-card/30 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden"
         >
-            <div className="absolute inset-0 bg-gradient-to-br from-[#07C5EB]/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#07C5EB]/50 to-transparent pointer-events-none" />
 
             <div className="relative z-10">
                 <div className="text-center mb-10">
@@ -30,10 +30,10 @@ export default function LeadershipApproach({ data }) {
                         <Users className="w-8 h-8 text-[#07C5EB]" />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-heading font-bold mb-4">
-                        {data.title}
+                        {data?.title}
                     </h2>
-                    <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                        {data.description}
+                    <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+                        {data?.description}
                     </p>
                 </div>
 
@@ -46,7 +46,7 @@ export default function LeadershipApproach({ data }) {
                             whileInView="visible"
                             viewport={{ once: true }}
                             custom={index}
-                            className="flex items-center gap-4 p-4 rounded-xl bg-background/50 border border-white/5 hover:border-[#07C5EB]/30 transition-colors"
+                            className="flex items-center gap-4 p-4 rounded-xl bg-background/10 border border-white/5 hover:border-[#07C5EB]/30 transition-colors"
                         >
                             <div className="w-8 h-8 rounded-full bg-[#07C5EB]/10 flex items-center justify-center shrink-0">
                                 <CheckCircle className="w-4 h-4 text-[#07C5EB]" />
@@ -56,8 +56,8 @@ export default function LeadershipApproach({ data }) {
                     ))}
                 </div>
 
-                <p className="text-gray-500 text-center italic border-t border-white/10 pt-8 mt-8">
-                    "{data.conclusion}"
+                <p className="text-gray-300 text-center italic border-t border-white/10 pt-8 mt-8">
+                    "{data?.conclusion}"
                 </p>
             </div>
         </motion.div>

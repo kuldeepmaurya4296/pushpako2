@@ -94,7 +94,7 @@ const Leadership = () => {
 
                         <div className="flex-1 grid gap-3 w-full">
                             {foundingLeadershipApproach.points.map((point, index) => (
-                                <div key={index} className="flex items-center gap-3 bg-background/50 p-3 rounded-lg border border-white/5">
+                                <div key={index} className="flex items-center gap-3 bg-background/10 p-3 rounded-lg border border-white/5">
                                     <CheckCircle className="w-5 h-5 text-[#07C5EB] shrink-0" />
                                     <span className="text-gray-300 text-sm font-medium">{point}</span>
                                 </div>
