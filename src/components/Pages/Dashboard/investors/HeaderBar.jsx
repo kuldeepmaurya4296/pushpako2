@@ -8,15 +8,6 @@ export default function HeaderBar({ investor, onProfileAction }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const router = useRouter();
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      toast.success('Logged out successfully');
-      router.push('/sign-in');
-    } catch (error) {
-      toast.error('Logout failed');
-    }
-  };
 
   return (
     <div className="flex justify-between items-center mb-8">
@@ -35,7 +26,7 @@ export default function HeaderBar({ investor, onProfileAction }) {
           </svg>
         </button>
         {profileDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-10">
+          <div className="absolute right-0 mt-2 min-w-48 bg-gray-800 rounded-lg shadow-lg z-10">
             <div className="p-4 border-b border-gray-700">
               <p className="text-sm text-gray-400">Signed in as</p>
               <p className="font-medium">{investor.email}</p>
@@ -59,8 +50,16 @@ export default function HeaderBar({ investor, onProfileAction }) {
               Edit Profile
             </button>
             <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 w-full text-left px-4 py-2 bg-red-600 hover:bg-red-700 transition rounded-b-lg"
+              onClick={async () => {
+                try {
+                  await fetch('/api/auth/logout', { method: 'POST' });
+                  toast.success('Logged out successfully');
+                  router.push('/sign-in');
+                } catch (error) {
+                  toast.error('Logout failed');
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Logout
