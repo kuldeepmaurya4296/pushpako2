@@ -1,37 +1,27 @@
 import mongoose from "mongoose"
 
+// Force model recompilation on hot reload
+if (mongoose.models.Team) {
+  delete mongoose.models.Team
+}
+
 const TeamSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     role: { type: String, required: true },
     bio: { type: String, required: true },
-    fullBio: { type: String },
     image: String,
-    email: { type: String, required: true },
-    phone: String,
-    linkedin: String,
-    twitter: String,
-    github: String,
     department: {
       type: String,
       enum: ["Executive", "Technology", "Engineering", "Operations", "Safety", "Marketing", "Sales"],
       required: true
     },
-    responsibilities: [{ type: String }],
-    joinDate: { type: String, required: true },
-    location: String,
-    skills: [{ type: String }],
-    achievements: [{ type: String }],
-    isActive: { type: Boolean, default: true },
-    order: { type: Number, default: 0 },
+    order: { type: Number, default: 99 },
   },
   { timestamps: true }
 )
 
 // Add indexes
 TeamSchema.index({ department: 1 })
-TeamSchema.index({ isActive: 1 })
-TeamSchema.index({ order: 1 })
-TeamSchema.index({ email: 1 }, { unique: true })
 
 export default mongoose.models.Team || mongoose.model("Team", TeamSchema)

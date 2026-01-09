@@ -116,24 +116,7 @@ export const leadershipTeam = [
         role: "Co-Founder & Technology Lead",
         department: "Technology",
         image: "/team/aneerudh-kumar.jpg",
-        bio: `Mr. Aneerudh Kumar is the Co-Founder and Technology Lead of PushpakO2 and is the principal architect behind the company's core engineering and technology stack. He leads the end-to-end development of PushpakO2's aviation and unmanned aerial systems, spanning concept design, system architecture, detailed engineering, prototyping, testing, and validation.`,
-        fullBio: `Mr. Aneerudh Kumar is the Co-Founder and Technology Lead of PushpakO2 and is the principal architect behind the company's core engineering and technology stack. He leads the end-to-end development of PushpakO2's aviation and unmanned aerial systems, spanning concept design, system architecture, detailed engineering, prototyping, testing, and validation.
-
-His responsibilities include aircraft and drone structural design, aerodynamics, avionics integration, embedded electronics, propulsion interfaces, telemetry, ground control systems, and mission-specific payload integration. He plays a decisive role in ensuring that every platform developed by PushpakO2 adheres to safety-first principles, regulatory compliance, and real-world operational robustness.
-
-As Technology Lead, Mr. Kumar champions a true in-house development philosophy, minimizing dependency on imported black-box technologies and prioritizing intellectual property ownership, design transparency, and long-term maintainability. His approach ensures that PushpakO2's platforms are not merely assembled solutions, but deep-engineered systems built for scalability, certification, and global competitiveness.`,
-        responsibilities: [
-            "Aircraft and drone structural design",
-            "Aerodynamics & avionics integration",
-            "Embedded electronics & propulsion interfaces",
-            "Telemetry & ground control systems",
-            "Mission-specific payload integration"
-        ],
-        linkedin: "",
-        twitter: "",
-        email: "aneerudh@pushpako2.com",
-        order: 1,
-        isActive: true
+        bio: `Mr. Aneerudh Kumar is the Co-Founder and Technology Lead of PushpakO2 and is the principal architect behind the company's core engineering and technology stack. He leads the end-to-end development of PushpakO2's aviation and unmanned aerial systems, spanning concept design, system architecture, detailed engineering, prototyping, testing, and validation.`
     },
     {
         id: "aditya-shrivastava",
@@ -141,26 +124,7 @@ As Technology Lead, Mr. Kumar champions a true in-house development philosophy, 
         role: "President & Co-Founder",
         department: "Executive",
         image: "/team/aditya-shrivastava.jpg",
-        bio: `Mr. Aditya Shrivastava is the President and Co-Founder of PushpakO2 and provides overall strategic leadership, governance oversight, and long-term vision for the organization. He is responsible for shaping the company's direction across regulatory alignment, institutional partnerships, organizational structure, compliance frameworks, and national positioning.`,
-        fullBio: `Mr. Aditya Shrivastava is the President and Co-Founder of PushpakO2 and provides overall strategic leadership, governance oversight, and long-term vision for the organization. He is responsible for shaping the company's direction across regulatory alignment, institutional partnerships, organizational structure, compliance frameworks, and national positioning.
-
-As President, he oversees engagement with regulators, government bodies, investors, and strategic partners, ensuring that PushpakO2 remains compliance-ready, audit-ready, and institutionally credible at every stage of growth. He also leads the formulation of internal policies, risk management frameworks, and ethical governance standards aligned with aviation and aerospace best practices.
-
-Mr. Shrivastava's leadership philosophy is rooted in engineering integrity, sovereign capability, and sustainable scale. He emphasizes building PushpakO2 as a long-term national asset, focused on substance over publicity, ownership over outsourcing, and capability creation over short-term commercialization.
-
-Together with the Technology Lead, he ensures that PushpakO2 evolves as a serious, mission-driven aerospace organization, capable of contributing meaningfully to India's self-reliance in aviation and advanced aerial systems.`,
-        responsibilities: [
-            "Strategic leadership & governance oversight",
-            "Regulatory alignment & institutional partnerships",
-            "Organizational structure & compliance frameworks",
-            "Engagement with regulators & government bodies",
-            "Internal policies & risk management"
-        ],
-        linkedin: "",
-        twitter: "",
-        email: "aditya@pushpako2.com",
-        order: 2,
-        isActive: true
+        bio: `Mr. Aditya Shrivastava is the President and Co-Founder of PushpakO2 and provides overall strategic leadership, governance oversight, and long-term vision for the organization. He is responsible for shaping the company's direction across regulatory alignment, institutional partnerships, organizational structure, compliance frameworks, and national positioning.`
     }
 ];
 

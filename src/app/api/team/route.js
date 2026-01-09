@@ -18,13 +18,7 @@ export async function GET(request) {
       query.department = department
     }
 
-    if (active === 'true') {
-      query.isActive = true
-    } else if (active === 'false') {
-      query.isActive = false
-    }
-
-    const team = await Team.find(query).sort({ order: 1 })
+    const team = await Team.find(query).sort({ order: 1, createdAt: -1 })
 
     // If no team members found in database, return hardcoded leadership data
     if (team.length === 0) {
@@ -35,12 +29,6 @@ export async function GET(request) {
 
       if (department && department !== 'all') {
         filteredTeam = filteredTeam.filter(member => member.department === department)
-      }
-
-      if (active === 'true') {
-        filteredTeam = filteredTeam.filter(member => member.isActive === true)
-      } else if (active === 'false') {
-        filteredTeam = filteredTeam.filter(member => member.isActive === false)
       }
 
       return NextResponse.json(filteredTeam)
