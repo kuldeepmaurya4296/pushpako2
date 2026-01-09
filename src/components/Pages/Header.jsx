@@ -165,7 +165,7 @@ export default function Header() {
                 ) : (
                   <Link href="/sign-in" className="w-1/2">
                     <Button
-                      className="w-full bg-[#07c5ebd3] hover:bg-[#07c5eb81] border border-white"
+                      className="w-full cursor-pointer bg-[#07c5ebd3] hover:bg-[#07c5eb81] border border-white"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Sign Up

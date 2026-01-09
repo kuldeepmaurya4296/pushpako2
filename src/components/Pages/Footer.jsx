@@ -87,7 +87,7 @@ export default function Footer() {
             <Button
               variant="hero"
               size="xl"
-              className="group w-full sm:w-auto min-w-[220px] max-w-full px-6 py-3 text-base sm:text-lg bg-[#07c5eb17] border flex items-center justify-center gap-2 "
+              className="group cursor-pointer w-full sm:w-auto min-w-[220px] max-w-full px-6 py-3 text-base sm:text-lg bg-[#07c5eb17] border flex items-center justify-center gap-2 "
               onClick={() => (window.location.href = "/contact-us")}
             >
               <span className="whitespace-nowrap">Schedule a Call</span>
@@ -97,7 +97,7 @@ export default function Footer() {
             <Button
               variant="heroOutline"
               size="xl"
-              className="group w-full sm:w-auto min-w-[220px] max-w-full px-6 py-3 text-base sm:text-lg bg-[#07c5eb00] border flex items-center justify-center gap-2 "
+              className="group w-full cursor-pointer sm:w-auto min-w-[220px] max-w-full px-6 py-3 text-base sm:text-lg bg-[#07c5eb00] border flex items-center justify-center gap-2 "
               onClick={handleDownload}
             >
               <span className="whitespace-nowrap">Download Pitch Deck</span>
