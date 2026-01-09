@@ -10,11 +10,27 @@ export const metadata = {
 const aircraftData = {
   title: "Aircraft Portfolio",
   models: [
-    { name: "Pushpak O2 Standard", range: "300 km", payload: "400 kg", usage: "Urban mobility & logistics" },
-    { name: "Pushpak O2 Premium", range: "350 km", payload: "450 kg", usage: "Intercity passenger transport" },
-    { name: "Pushpak O2 Enterprise", range: "400 km", payload: "500 kg", usage: "Heavy cargo & defense operations" }
+    {
+      name: "Pushpak O2 Ambulance",
+      range: "300 km",
+      payload: "400 kg",
+      usage: "Air ambulance and emergency medical services"
+    },
+    {
+      name: "Pushpak O2 Airtaxi",
+      range: "450 km",
+      payload: "450 kg",
+      usage: "Urban and regional air taxi transportation"
+    },
+    {
+      name: "Pushpak O2 Personal",
+      range: "500 km",
+      payload: "500 kg",
+      usage: "Personal, executive, and private air travel"
+    }
   ]
 }
+
 export default function AircraftClient() {
   return (
     <section className="py-24 text-white">

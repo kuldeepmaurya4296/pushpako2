@@ -2,7 +2,7 @@ import React from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ui/ImageUpload';
 
-const DEPARTMENTS = ['Executive', 'Technology', 'Engineering', 'Operations', 'Safety', 'Marketing', 'Sales'];
+const DEPARTMENTS = ['Executive', 'Technology', 'Engineering', 'Operations', 'Safety', 'Marketing', 'Sales', 'IT'];
 
 export function AddEditTeamDialog({ isOpen, onClose, onSave, member, saving }) {
   const [formData, setFormData] = React.useState({
