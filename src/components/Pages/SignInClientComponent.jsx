@@ -25,9 +25,9 @@ export default function SignInClientComponent() {
                     await fetch('/api/auth/sync-session', { method: 'POST' });
 
                     if (session.user.role === 'admin') {
-                        router.push('/dashboards/admin');
+                        window.location.href = '/dashboards/admin';
                     } else {
-                        router.push(`/dashboards/investors/${session.user.id}`);
+                        window.location.href = `/dashboards/investors/${session.user.id}`;
                     }
                 } catch (error) {
                     console.error('Session sync failed:', error);
@@ -66,9 +66,9 @@ export default function SignInClientComponent() {
                     toast.success('Signed in successfully');
                     // Redirect based on role
                     if (data.user.role === 'admin') {
-                        router.push('/dashboards/admin');
+                        window.location.href = '/dashboards/admin';
                     } else {
-                        router.push(`/dashboards/investors/${data.user.id}`);
+                        window.location.href = `/dashboards/investors/${data.user.id}`;
                     }
                 } else {
                     toast.error(data.error);
