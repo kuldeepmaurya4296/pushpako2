@@ -1,68 +1,54 @@
+import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { randomUUID } from 'crypto';
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
 export async function POST(request) {
-  try {
-    const data = await request.formData();
-    const file = data.get('file');
+    const { searchParams } = new URL(request.url);
+    const filename = searchParams.get('filename');
 
-    if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+    if (!filename) {
+        return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
     }
 
-    // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return NextResponse.json(
-        { error: `Invalid file type. Allowed: ${ALLOWED_TYPES.join(', ')}` },
-        { status: 400 }
-      );
+    // 1. Vercel Blob (Production/configured) - Primary Method if Token exists
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+        try {
+            if (!request.body) {
+                return NextResponse.json({ error: 'No file body provided' }, { status: 400 });
+            }
+            const blob = await put(filename, request.body, {
+                access: 'public',
+            });
+            return NextResponse.json(blob);
+        } catch (error) {
+            console.error("Vercel Blob Upload Error:", error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
     }
 
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { error: `File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB` },
-        { status: 400 }
-      );
-    }
-
-    // Convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Generate unique filename
-    const extension = file.name.split('.').pop();
-    const filename = `${randomUUID()}.${extension}`;
-
-    // Ensure uploads directory exists
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
+    // 2. Local File System (Fallback for localhost without Blob token)
     try {
-      await mkdir(uploadsDir, { recursive: true });
+        console.log("Using Local Storage Fallback (No BLOB_READ_WRITE_TOKEN found)");
+
+        const arrayBuffer = await request.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        // Unique name to avoid conflicts locally
+        const uniqueName = `${Date.now()}-${filename}`;
+        const uploadsDir = join(process.cwd(), 'public', 'uploads');
+
+        await mkdir(uploadsDir, { recursive: true });
+        const path = join(uploadsDir, uniqueName);
+
+        await writeFile(path, buffer);
+
+        return NextResponse.json({
+            url: `/uploads/${uniqueName}`,
+            pathname: uniqueName
+        });
     } catch (error) {
-      // Directory might already exist, continue
+        console.error("Local upload failed", error);
+        return NextResponse.json({ error: "Local upload failed: " + error.message }, { status: 500 });
     }
-
-    // Write file
-    const filepath = join(uploadsDir, filename);
-    await writeFile(filepath, buffer);
-
-    // Return the public URL
-    const url = `/uploads/${filename}`;
-
-    return NextResponse.json({ url, filename });
-  } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
 }
