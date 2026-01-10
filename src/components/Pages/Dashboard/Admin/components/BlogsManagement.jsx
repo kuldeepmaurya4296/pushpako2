@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Search, Edit, Trash2, Eye, FileText, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import SharedBlogEditor from "@/components/Pages/Blogs/SharedBlogEditor";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import BlogEditor from "./BlogEditor";
 
 export default function BlogsManagement() {
   const [blogs, setBlogs] = useState([]);
@@ -11,7 +10,6 @@ export default function BlogsManagement() {
   const [view, setView] = useState("list"); // 'list' | 'editor'
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const { user } = useCurrentUser();
 
   useEffect(() => {
     fetchBlogs();
@@ -19,17 +17,14 @@ export default function BlogsManagement() {
 
   const fetchBlogs = async () => {
     try {
-      const res = await fetch("/api/blogs?limit=100"); // Fetch all for admin
+      const res = await fetch("/api/blogs?limit=100"); // Fetch all for admin mostly, or implement server-side pagination later
       const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Failed to fetch");
-
       if (data.blogs) {
         setBlogs(data.blogs);
       }
     } catch (error) {
       console.error("Failed to fetch blogs:", error);
-      toast.error(error.message || "Failed to load blogs");
+      toast.error("Failed to load blogs");
     } finally {
       setLoading(false);
     }
@@ -47,8 +42,7 @@ export default function BlogsManagement() {
         toast.success("Blog deleted successfully");
         setBlogs(blogs.filter((blog) => blog._id !== id));
       } else {
-        const data = await res.json();
-        toast.error(data.error || "Failed to delete blog");
+        toast.error("Failed to delete blog");
       }
     } catch (error) {
       console.error("Error deleting blog:", error);
@@ -62,14 +56,13 @@ export default function BlogsManagement() {
 
   if (view === "editor") {
     return (
-      <SharedBlogEditor
+      <BlogEditor
         blog={selectedBlog}
-        user={user}
         onCancel={() => {
           setView("list");
           setSelectedBlog(null);
         }}
-        onSuccess={() => {
+        onSave={() => {
           setView("list");
           setSelectedBlog(null);
           fetchBlogs();
