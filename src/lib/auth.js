@@ -1,12 +1,12 @@
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
 export async function verifyToken(token) {
   try {
-    const secret = process.env.JWT_SECRET || 'fallback-secret';
-    const decoded = jwt.verify(token, secret);
-    return decoded;
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secret');
+    const { payload } = await jwtVerify(token, secret);
+    return payload;
   } catch (error) {
-    console.error("Token verification failed:", error.message);
+    // console.error("Token verification failed:", error.message);
     return null;
   }
 }
