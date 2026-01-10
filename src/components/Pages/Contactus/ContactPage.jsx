@@ -2,24 +2,8 @@
 
 import { motion } from "framer-motion"
 import { Mail, Phone, MapPin, Clock } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import toast from "react-hot-toast"
-
-const contactData = {
-  heading: "Contact Pushpak O2",
-  intro:
-    "Whether you are an investor, aviation partner, research institution, or future customer — our team is here to assist you.",
-  channels: [
-    { icon: Mail, label: "Email", value: "info@pushpako2.com" },
-    { icon: Phone, label: "Phone", value: "+91 90000 11111" },
-    { icon: MapPin, label: "Headquarters", value: "Bhopal, India" },
-    { icon: Clock, label: "Working Hours", value: "Mon–Fri, 10AM–6PM IST" },
-  ],
-  form: {
-    title: "Send Us a Message",
-    note: "Our specialists typically respond within 24 business hours.",
-  },
-}
 
 export default function ContactPage() {
   const [form, setForm] = useState({
@@ -29,7 +13,38 @@ export default function ContactPage() {
     message: "",
   })
 
+  // State for dynamic contact info
+  const [contactInfo, setContactInfo] = useState({
+    email: "info@pushpako2.com",
+    phone: "+91 90000 11111",
+    address: "Bhopal, India",
+  })
   const [loading, setLoading] = useState(false)
+
+  // Fetch contact details on mount
+  useEffect(() => {
+    const fetchContactData = async () => {
+      try {
+        const response = await fetch('/api/about-us')
+        if (response.ok) {
+          const data = await response.json()
+          // Extract company info from the footer section of the response if available
+          const info = data?.footer?.companyInfo
+          if (info) {
+            setContactInfo({
+              email: info.email || "info@pushpako2.com",
+              phone: info.phone || "+91 80856 13350",
+              address: info.address || "Bhopal, India",
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching contact details:', error)
+      }
+    }
+
+    fetchContactData()
+  }, [])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -76,6 +91,14 @@ export default function ContactPage() {
     }
   }
 
+  // Dynamic channels array based on fetching
+  const channels = [
+    { icon: Mail, label: "Email", value: contactInfo.email },
+    { icon: Phone, label: "Phone", value: contactInfo.phone },
+    { icon: MapPin, label: "Headquarters", value: contactInfo.address },
+    { icon: Clock, label: "Working Hours", value: "Mon–Fri, 10AM–6PM IST" },
+  ]
+
   return (
     <section className="min-h-screen py-24 text-white">
       <div className="container mx-auto px-6 lg:px-10 grid lg:grid-cols-2 gap-16">
@@ -84,11 +107,13 @@ export default function ContactPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
-          <h1 className="text-5xl font-bold mb-6">{contactData.heading}</h1>
-          <p className="text-gray-300 mb-10 max-w-xl">{contactData.intro}</p>
+          <h1 className="text-5xl font-bold mb-6">Contact Pushpak O2</h1>
+          <p className="text-gray-300 mb-10 max-w-xl">
+            Whether you are an investor, aviation partner, research institution, or future customer — our team is here to assist you.
+          </p>
 
           <div className="space-y-6">
-            {contactData.channels.map((item) => {
+            {channels.map((item) => {
               const Icon = item.icon
               return (
                 <div
@@ -113,8 +138,8 @@ export default function ContactPage() {
           viewport={{ once: true }}
           className="p-10 border border-white/10 rounded-2xl space-y-6"
         >
-          <h2 className="text-2xl font-semibold">{contactData.form.title}</h2>
-          <p className="text-gray-300">{contactData.form.note}</p>
+          <h2 className="text-2xl font-semibold">Send Us a Message</h2>
+          <p className="text-gray-300">Our specialists typically respond within 24 business hours.</p>
 
           <input
             name="name"
@@ -153,7 +178,7 @@ export default function ContactPage() {
 
           <button
             disabled={loading}
-            className="w-full py-3 border border-white/10 rounded-lg hover:border-white/40 transition-all"
+            className="w-full py-3 border border-white/10 rounded-lg hover:border-white/40 transition-all cursor-pointer"
           >
             {loading ? "Sending..." : "Submit Message"}
           </button>

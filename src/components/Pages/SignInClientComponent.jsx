@@ -29,9 +29,9 @@ export default function SignInClientComponent() {
                     }
 
                     if (session.user.role === 'admin') {
-                        window.location.href = '/dashboards/admin';
+                        router.push('/dashboards/admin');
                     } else {
-                        window.location.href = `/dashboards/investors/${session.user.id}`;
+                        router.push(`/dashboards/investors/${session.user.id}`);
                     }
                 } catch (error) {
                     console.error('Session sync failed:', error);
@@ -46,7 +46,12 @@ export default function SignInClientComponent() {
 
     const handleSignOut = async () => {
         await fetch('/api/auth/signout', { method: 'POST' }); // Ensure local cleanup if needed
-        window.location.href = '/api/auth/signout'; // Force NextAuth signout
+        // For signing out, we might still want a hard redirect to clear all state or use signOut() from next-auth
+        // window.location.href = '/api/auth/signout'; 
+        // Better:
+        // signOut({ callbackUrl: '/sign-in' });
+        // But to stick to the existing logic which calls an API route:
+        router.push('/api/auth/signout');
     };
 
     const handleChange = (e) => {
@@ -76,9 +81,9 @@ export default function SignInClientComponent() {
                     toast.success('Signed in successfully');
                     // Redirect based on role
                     if (data.user.role === 'admin') {
-                        window.location.href = '/dashboards/admin';
+                        router.push('/dashboards/admin');
                     } else {
-                        window.location.href = `/dashboards/investors/${data.user.id}`;
+                        router.push(`/dashboards/investors/${data.user.id}`);
                     }
                 } else {
                     toast.error(data.error);
