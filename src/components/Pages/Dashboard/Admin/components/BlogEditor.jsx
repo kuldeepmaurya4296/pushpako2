@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { X, Save, Image as ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import ImageUpload from "@/components/ui/ImageUpload";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 
 export default function BlogEditor({ blog, onCancel, onSave }) {
     const [loading, setLoading] = useState(false);
@@ -67,9 +68,18 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
 
             const data = await res.json();
 
-            if (!res.ok) {
+            if (res.ok) {
+                // Success handling
+                toast.success(blog ? 'Blog updated successfully' : 'Blog created successfully');
+            } else {
+                console.log('API Error:', res);
+                // Check response status
+                if (res.status === 401) {
+                    // Redirect to login
+                }
                 throw new Error(data.error || "Something went wrong");
             }
+
 
             toast.success(blog ? "Blog updated successfully" : "Blog created successfully");
             onSave();
@@ -211,19 +221,16 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
                     />
                 </div>
 
+
+
                 {/* Content */}
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-300">
-                        Content (Markdown supported)
+                        Content
                     </label>
-                    <textarea
-                        name="content"
-                        required
-                        rows="15"
-                        value={formData.content}
-                        onChange={handleChange}
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white font-mono text-sm focus:outline-none focus:border-blue-500"
-                        placeholder="# Blog Content goes here..."
+                    <RichTextEditor
+                        content={formData.content}
+                        onChange={(html) => setFormData(prev => ({ ...prev, content: html }))}
                     />
                 </div>
 

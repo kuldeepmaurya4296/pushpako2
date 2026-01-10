@@ -1,12 +1,14 @@
 import mongoose from "mongoose"
 
 const CommentSchema = new mongoose.Schema({
-  id: String,
-  author: String,
+  userId: { type: String, required: true },
+  author: { type: String, required: true },
   authorEmail: String,
-  content: String,
+  userImage: String, // Store profile image URL
+  content: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  isApproved: { type: Boolean, default: false },
+  likes: [{ type: String }], // Array of userIds who liked
+  isApproved: { type: Boolean, default: true }, // Auto-approve for now
 })
 
 const BlogSchema = new mongoose.Schema(

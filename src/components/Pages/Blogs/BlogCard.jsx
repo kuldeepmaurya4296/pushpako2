@@ -2,15 +2,42 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Eye, Heart, User, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, Eye, Heart, User, ArrowRight, Trash2 } from 'lucide-react';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
-export default function BlogCard({ blog, index }) {
+export default function BlogCard({ blog, index, user, onDelete }) {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
+  };
+
+  const isAuthor = user?.id === blog.authorId;
+  const isAdmin = user?.role === 'admin';
+  const { userCurrent } = useCurrentUser();
+  const canDelete = isAuthor || isAdmin || userCurrent;
+
+  const [blogs, setBlogs] = useState([]);
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this blog?")) return;
+
+    try {
+      const res = await fetch(`/api/blogs/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        toast.success("Blog deleted successfully");
+        setBlogs(blogs.filter((blog) => blog._id !== id));
+      } else {
+        toast.error("Failed to delete blog");
+      }
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+      toast.error("Error deleting blog");
+    }
   };
 
   return (
@@ -20,10 +47,21 @@ export default function BlogCard({ blog, index }) {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
       whileHover={{ y: -5 }}
-      className="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
+      className="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group relative"
       style={{ willChange: 'transform' }}
     >
-      <Link href={`/blogs/${blog?.slug}`}>
+      {canDelete && (
+        <button
+          onClick={() => handleDelete(blog._id)}
+          className="p-1.5 hover:bg-red-500/20 text-red-400 rounded transition"
+          title="Delete"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      )}
+
+      <Link href={`/blogs/${blog?.slug}`} className="block h-full">
+        {/* ... existing card content ... */}
         <div className="relative overflow-hidden">
           <motion.img
             src={blog.featuredImage}
@@ -121,10 +159,6 @@ export default function BlogCard({ blog, index }) {
             <div className="flex items-center gap-1 text-sm text-gray-400">
               <Eye className="w-4 h-4" />
               <span>{blog.views}</span>
-            </div>
-            <div className="flex items-center gap-1 text-sm text-gray-400">
-              <Heart className="w-4 h-4" />
-              <span>{blog.likes}</span>
             </div>
           </motion.div>
 

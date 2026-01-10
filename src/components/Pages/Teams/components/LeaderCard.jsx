@@ -47,7 +47,7 @@ export default function LeaderCard({ member, index }) {
                         <p className="text-sm font-medium text-gray-400">{member?.role}</p>
                     </div>
 
-                    <p className="text-sm text-gray-400 leading-relaxed line-clamp-4 flex-grow">
+                    <p className="text-sm text-gray-400 leading-relaxed line-clamp-7 flex-grow">
                         {member?.bio}
                     </p>
                 </div>

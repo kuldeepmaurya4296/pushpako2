@@ -1,11 +1,31 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, Clock, Eye, Heart, Share2, User, MessageCircle, Trash2, Reply } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Eye, Heart, Share2, User, Edit } from 'lucide-react';
 import CommentsSection from './CommentsSection';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import SharedBlogEditor from './SharedBlogEditor';
 
 export default function BlogDetail({ blog }) {
   const [isLiked, setIsLiked] = useState(false);
+  const { user } = useCurrentUser();
+  const [isEditing, setIsEditing] = useState(false);
+
+  // If editing, show the editor full screen
+  if (isEditing) {
+    return (
+      <div className="fixed inset-0 z-50 bg-[#060B18] overflow-y-auto">
+        <div className="container mx-auto px-4 py-8">
+          <SharedBlogEditor
+            user={user}
+            blog={blog}
+            onCancel={() => setIsEditing(false)}
+            onSuccess={() => window.location.reload()}
+          />
+        </div>
+      </div>
+    );
+  }
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -33,11 +53,16 @@ export default function BlogDetail({ blog }) {
     }
   };
 
+  const isAuthor = user?.id === blog.authorId;
+  const isAdmin = user?.role === 'admin';
+  const canEdit = isAuthor || isAdmin;
+
+
   return (
     <div className="min-h-screen bg-[#060B18] text-white mt-14">
       {/* Header */}
-      <div className="border-b border-gray-800 bg-[#060B18]/95 backdrop-blur-sm">
-        <div className="container mx-auto px-6 lg:px-10 py-4">
+      <div className="border-b border-gray-800 bg-[#060B18]/95 backdrop-blur-sm sticky top-14 z-40">
+        <div className="container mx-auto px-6 lg:px-10 py-4 flex justify-between items-center">
           <div>
             <Link
               href="/blogs"
@@ -49,31 +74,35 @@ export default function BlogDetail({ blog }) {
               <span className="group-hover:translate-x-1 transition-transform duration-200">Back to Blogs</span>
             </Link>
           </div>
+
+          {canEdit && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition"
+            >
+              <Edit className="w-4 h-4" />
+              Edit Blog
+            </button>
+          )}
         </div>
       </div>
 
       <article className="container mx-auto px-6 lg:px-10 py-12">
         {/* Hero Section */}
-        <div
-          className="max-w-4xl mx-auto mb-12"
-        >
+        <div className="max-w-4xl mx-auto mb-12">
           <div className="relative mb-8">
             <img
               src={blog.featuredImage}
               alt={blog.title}
               className="w-full h-64 md:h-96 object-cover rounded-xl shadow-2xl"
             />
-            <div
-              className="absolute top-4 left-4"
-            >
+            <div className="absolute top-4 left-4">
               <span className="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded-full">
                 {blog.category}
               </span>
             </div>
             {blog.isFeatured && (
-              <div
-                className="absolute top-4 right-4"
-              >
+              <div className="absolute top-4 right-4">
                 <span className="px-3 py-1 bg-yellow-600 text-white text-sm font-semibold rounded-full">
                   Featured
                 </span>
@@ -81,9 +110,7 @@ export default function BlogDetail({ blog }) {
             )}
           </div>
 
-          <div
-            className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-6"
-          >
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-6">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
               <span>{blog.author}</span>
@@ -102,66 +129,57 @@ export default function BlogDetail({ blog }) {
             </div>
           </div>
 
-          <h1
-            className="text-3xl md:text-5xl font-bold mb-6 leading-tight"
-          >
+          <h1 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
             {blog.title}
           </h1>
 
-          <p
-            className="text-xl text-gray-300 mb-8 leading-relaxed"
-          >
+          <p className="text-xl text-gray-300 leading-relaxed border-l-4 border-blue-500 pl-4 mb-10">
             {blog.excerpt}
           </p>
 
-          {/* Tags */}
-          <div
-            className="flex flex-wrap gap-2 mb-8"
-          >
-            {blog.tags.map((tag, index) => (
-              <span
-                key={tag}
-                className="px-3 py-1 bg-gray-800 text-gray-300 text-sm rounded-full hover:bg-gray-700 transition-colors"
+          <div className="flex items-center justify-between border-y border-gray-800 py-6 mb-12">
+            <div className="flex items-center gap-4">
+              {/* Share Buttons */}
+              <button onClick={handleShare} className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition" title="Share">
+                <Share2 className="w-5 h-5" />
+                Share
+              </button>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setIsLiked(!isLiked)}
+                className={`flex items-center gap-2 px-3 py-1 rounded-full transition ${isLiked ? 'text-red-500 bg-red-500/10' : 'text-gray-400 hover:text-gray-200'}`}
               >
-                #{tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Action Buttons */}
-          <div
-            className="flex items-center gap-4"
-          >
-            <button
-              onClick={() => setIsLiked(!isLiked)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isLiked ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-              <span>{blog.likes + (isLiked ? 1 : 0)}</span>
-            </button>
-
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Share</span>
-            </button>
+                <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                {isLiked ? 'Liked' : 'Like'}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="max-w-4xl mx-auto">
-          <div
-            className="prose prose-lg prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
-          />
-
-          {/* Comments Section */}
-          <CommentsSection blogId={blog._id} />
+        {/* Content Section - Render HTML Safely */}
+        <div className="max-w-3xl mx-auto prose prose-invert prose-lg prose-blue">
+          <div dangerouslySetInnerHTML={{ __html: blog.content }} />
         </div>
+
+        {/* Tags */}
+        {blog.tags && blog.tags.length > 0 && (
+          <div className="max-w-3xl mx-auto mt-12 pt-8 border-t border-gray-800">
+            <div className="flex flex-wrap gap-2">
+              {blog.tags.map((tag, index) => (
+                <span key={index} className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Comments Section */}
+        <div className="max-w-3xl mx-auto mt-16 pt-12 border-t border-gray-800">
+          <CommentsSection blogId={blog._id} currentUser={user} />
+        </div>
+
       </article>
     </div>
   );
