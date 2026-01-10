@@ -69,23 +69,14 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
             const data = await res.json();
 
             if (res.ok) {
-                // Success handling
-                toast.success(blog ? 'Blog updated successfully' : 'Blog created successfully');
+                toast.success(blog ? "Blog updated successfully" : "Blog created successfully");
+                onSave();
             } else {
-                console.log('API Error:', res);
-                // Check response status
-                if (res.status === 401) {
-                    // Redirect to login
-                }
-                throw new Error(data.error || "Something went wrong");
+                toast.error(data.error || "Something went wrong");
             }
-
-
-            toast.success(blog ? "Blog updated successfully" : "Blog created successfully");
-            onSave();
         } catch (error) {
             console.error(error);
-            toast.error(error.message);
+            toast.error("Failed to save blog");
         } finally {
             setLoading(false);
         }
@@ -127,10 +118,11 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
                         <input
                             type="text"
                             name="slug"
+                            required
                             value={formData.slug}
                             onChange={handleChange}
                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-                            placeholder="auto-generated-if-empty"
+                            placeholder="url-slug"
                         />
                     </div>
 
@@ -166,45 +158,28 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
 
                     {/* Tags */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300">
-                            Tags (comma separated)
-                        </label>
+                        <label className="text-sm font-medium text-gray-300">Tags (comma separated)</label>
                         <input
                             type="text"
                             name="tags"
                             value={formData.tags}
                             onChange={handleChange}
                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-                            placeholder="Tech, Innovation, Future"
+                            placeholder="Technology, Innovation, Future"
                         />
                     </div>
 
                     {/* Read Time */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300">
-                            Read Time (min)
-                        </label>
+                        <label className="text-sm font-medium text-gray-300">Read Time (min)</label>
                         <input
                             type="number"
                             name="readTime"
-                            min="1"
                             value={formData.readTime}
                             onChange={handleChange}
                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
                         />
                     </div>
-                </div>
-
-                {/* Featured Image */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">
-                        Featured Image
-                    </label>
-                    <ImageUpload
-                        value={formData.featuredImage}
-                        onChange={(url) => setFormData(prev => ({ ...prev, featuredImage: url }))}
-                        disabled={loading}
-                    />
                 </div>
 
                 {/* Excerpt */}
@@ -213,28 +188,34 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
                     <textarea
                         name="excerpt"
                         required
-                        rows="3"
                         value={formData.excerpt}
                         onChange={handleChange}
+                        rows={3}
                         className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
                         placeholder="Brief summary of the blog post..."
                     />
                 </div>
 
-
-
-                {/* Content */}
+                {/* Featured Image */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">
-                        Content
-                    </label>
+                    <ImageUpload
+                        label="Featured Image"
+                        value={formData.featuredImage}
+                        onChange={(url) => setFormData(prev => ({ ...prev, featuredImage: url }))}
+                        required
+                    />
+                </div>
+
+                {/* Content - Rich Text Editor */}
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Content</label>
                     <RichTextEditor
                         content={formData.content}
                         onChange={(html) => setFormData(prev => ({ ...prev, content: html }))}
                     />
                 </div>
 
-                {/* Checkboxes */}
+                {/* Toggles */}
                 <div className="flex gap-6">
                     <label className="flex items-center gap-2 cursor-pointer">
                         <input
@@ -242,9 +223,9 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
                             name="isPublished"
                             checked={formData.isPublished}
                             onChange={handleChange}
-                            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 bg-gray-700 border-gray-600"
+                            className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-gray-700 border-gray-600"
                         />
-                        <span className="text-gray-300">Published</span>
+                        <span className="text-sm text-gray-300">Published</span>
                     </label>
 
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -253,28 +234,37 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
                             name="isFeatured"
                             checked={formData.isFeatured}
                             onChange={handleChange}
-                            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 bg-gray-700 border-gray-600"
+                            className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-gray-700 border-gray-600"
                         />
-                        <span className="text-gray-300">Featured</span>
+                        <span className="text-sm text-gray-300">Featured</span>
                     </label>
                 </div>
 
                 {/* Actions */}
-                <div className="flex justify-end gap-4 pt-4 border-t border-gray-700">
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                        className="px-4 py-2 text-gray-300 hover:text-white transition"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                        {blog ? "Update Blog" : "Create Blog"}
+                        {loading ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Saving...
+                            </>
+                        ) : (
+                            <>
+                                <Save className="w-4 h-4" />
+                                Save Blog
+                            </>
+                        )}
                     </button>
                 </div>
             </form>
