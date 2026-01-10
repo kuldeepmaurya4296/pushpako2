@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 
+// NOT for middleware usage, only for API routes or Server Components
 export async function verifyToken(token) {
   try {
     const secret = process.env.JWT_SECRET || 'fallback-secret';
