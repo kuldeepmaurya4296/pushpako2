@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Plane, Twitter, Linkedin, Instagram, ArrowRight, Mail, Phone, ChevronDown, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 
 const footerSections = [
   {
@@ -202,13 +203,13 @@ export default function Footer() {
                     className="px-4 pb-3 space-y-2"
                   >
                     {section.links.map((link) => (
-                      <a
+                      <Link
                         key={link.name}
                         href={link.href}
                         className="block text-sm text-gray-300 hover:text-white"
                       >
                         {link.name}
-                      </a>
+                      </Link>
                     ))}
                   </motion.div>
                 )}
