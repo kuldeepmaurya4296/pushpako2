@@ -8,9 +8,12 @@ import NewsTab from './NewsTab';
 import ReportsTab from './ReportsTab';
 import ProfileTab from './ProfileTab';
 
+import FirstLoginContact from './FirstLoginContact';
+
 export default function InvestorDashboard({ investor }) {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showFirstLogin, setShowFirstLogin] = useState(investor.isFirstLogin === true);
 
   const handleProfileAction = (action) => {
     if (action === 'view' || action === 'edit') {
@@ -19,8 +22,12 @@ export default function InvestorDashboard({ investor }) {
     }
   };
 
+  const handleOnboardingComplete = () => {
+    setShowFirstLogin(false);
+  };
+
   return (
-    <div className="min-h-screen bg-[#060B18] text-white p-2 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-[#060B18] text-white p-2 sm:p-4 md:p-6 relative">
       <div className="max-w-7xl mx-auto">
         <HeaderBar investor={investor} onProfileAction={handleProfileAction} />
         <NavigationTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -34,6 +41,10 @@ export default function InvestorDashboard({ investor }) {
           {activeTab === 'reports' && <ReportsTab />}
         </div>
       </div>
+
+      {showFirstLogin && (
+        <FirstLoginContact investor={investor} onComplete={handleOnboardingComplete} />
+      )}
     </div>
   );
 }
