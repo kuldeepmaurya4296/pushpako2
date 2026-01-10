@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { X, Save, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import ImageUpload from "@/components/ui/ImageUpload";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 
 export default function SharedBlogEditor({
     blog,
@@ -221,19 +222,17 @@ export default function SharedBlogEditor({
                     />
                 </div>
 
+
+
                 {/* Content */}
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-300">
-                        Content (Markdown supported)
+                        Content
                     </label>
-                    <textarea
-                        name="content"
-                        required
-                        rows="15"
-                        value={formData.content}
-                        onChange={handleChange}
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white font-mono text-sm focus:outline-none focus:border-blue-500"
-                        placeholder="# Blog Content goes here..."
+                    <RichTextEditor
+                        key={blog ? blog._id : 'new'} // Force re-initialization when blog data changes or is present
+                        content={formData.content}
+                        onChange={(html) => setFormData(prev => ({ ...prev, content: html }))}
                     />
                 </div>
 

@@ -36,12 +36,10 @@ export default function ImageUpload({
 
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload', {
+      // For Vercel Blob, we send the file as the body and the filename as a query param
+      const response = await fetch(`/api/upload?filename=${file.name}`, {
         method: 'POST',
-        body: formData,
+        body: file,
       });
 
       if (!response.ok) {
@@ -103,11 +101,10 @@ export default function ImageUpload({
         <button
           type="button"
           onClick={() => handleModeSwitch('upload')}
-          className={`flex items-center gap-2 px-3 py-1 rounded text-sm transition-colors ${
-            mode === 'upload'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
+          className={`flex items-center gap-2 px-3 py-1 rounded text-sm transition-colors ${mode === 'upload'
+            ? 'bg-blue-600 text-white'
+            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
           disabled={disabled || isUploading}
         >
           <Upload className="w-4 h-4" />
@@ -116,11 +113,10 @@ export default function ImageUpload({
         <button
           type="button"
           onClick={() => handleModeSwitch('url')}
-          className={`flex items-center gap-2 px-3 py-1 rounded text-sm transition-colors ${
-            mode === 'url'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
+          className={`flex items-center gap-2 px-3 py-1 rounded text-sm transition-colors ${mode === 'url'
+            ? 'bg-blue-600 text-white'
+            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
           disabled={disabled || isUploading}
         >
           <Link className="w-4 h-4" />
@@ -133,11 +129,10 @@ export default function ImageUpload({
         <div className="space-y-3">
           <div
             onClick={() => !disabled && !isUploading && fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-              disabled || isUploading
-                ? 'border-gray-600 bg-gray-800 cursor-not-allowed'
-                : 'border-gray-600 hover:border-gray-500 bg-gray-800 hover:bg-gray-750'
-            }`}
+            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${disabled || isUploading
+              ? 'border-gray-600 bg-gray-800 cursor-not-allowed'
+              : 'border-gray-600 hover:border-gray-500 bg-gray-800 hover:bg-gray-750'
+              }`}
           >
             {isUploading ? (
               <div className="flex flex-col items-center gap-2">

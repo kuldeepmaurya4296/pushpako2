@@ -9,7 +9,7 @@ export default async function page() {
 
   try {
     await connectDB();
-    const limit = 9;
+    const limit = 20;
     const page = 1;
 
     // Fetch blogs and total count parallelly
@@ -32,7 +32,7 @@ export default async function page() {
     console.error("Error fetching blogs:", error);
     return (
       <div className="min-h-screen text-white bg-[#060B18]">
-        <BlogsClient initialBlogs={[]} totalCount={0} initialLimit={9} />
+        <BlogsClient initialBlogs={[]} totalCount={0} initialLimit={20} />
       </div>
     );
   }

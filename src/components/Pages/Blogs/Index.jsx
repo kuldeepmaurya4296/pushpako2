@@ -8,6 +8,12 @@ import CategoryFilter from './CategoryFilter';
 import RecentBlogs from './RecentBlogs';
 import NewsletterSignup from './NewsletterSignup';
 
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import SharedBlogEditor from './SharedBlogEditor';
+import { Plus } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { Pagination } from '@/components/ui/pagination';
+
 export default function BlogsClient({ initialBlogs, totalCount: initialTotalCount, initialLimit }) {
   const [blogs, setBlogs] = useState(initialBlogs || []);
   const [loading, setLoading] = useState(false);
@@ -16,23 +22,34 @@ export default function BlogsClient({ initialBlogs, totalCount: initialTotalCoun
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const { user } = useCurrentUser();
+  const [showEditor, setShowEditor] = useState(false);
 
   // Define categories (you might want to fetch these from API too)
   const blogCategories = ['All', 'Technology', 'Industry', 'Safety', 'Business', 'Sustainability'];
 
-  const handleLoadMore = async () => {
+  // Refresh blogs after create
+  // Refresh blogs after create
+  const handleBlogSuccess = () => {
+    setShowEditor(false);
+    // Ideally re-fetch or prepend new blog. For simplicity, reload page or fetch fresh.
+    // Let's just reload for now to get fresh state including the new blog
+    window.location.reload();
+  };
+
+  const handlePageChange = async (newPage) => {
     setLoading(true);
     try {
-      const nextPage = page + 1;
-      const res = await fetch(`/api/blogs?page=${nextPage}&limit=${initialLimit}&published=true`);
+      const res = await fetch(`/api/blogs?page=${newPage}&limit=${initialLimit}&published=true`);
       const data = await res.json();
 
-      if (data.blogs && data.blogs.length > 0) {
-        setBlogs(prev => [...prev, ...data.blogs]);
-        setPage(nextPage);
+      if (data.blogs) {
+        setBlogs(data.blogs);
+        setPage(newPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (error) {
-      console.error("Failed to load more blogs", error);
+      console.error("Failed to load blogs", error);
     } finally {
       setLoading(false);
     }
@@ -75,7 +92,7 @@ export default function BlogsClient({ initialBlogs, totalCount: initialTotalCoun
     <div className="min-h-screen bg-[#060B18] text-white">
       {/* Hero Section */}
       <motion.section
-        className="py-8 md:py-12 bg-gradient-to-b from-blue-900/20 to-transparent"
+        className="py-8 md:py-12 bg-gradient-to-b from-blue-900/20 to-transparent relative"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -106,11 +123,24 @@ export default function BlogsClient({ initialBlogs, totalCount: initialTotalCoun
           </motion.p>
         </div>
       </motion.section>
-
+      <section className='w-full flex justify-center items-center'>
+        {user && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowEditor(true)}
+            className="self-center cursor-pointer right-4 md:top-8 md:right-10 flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-lg transition-colors z-20"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="hidden sm:inline">Write Blog</span>
+          </motion.button>
+        )}
+      </section>
       {/* Search and Filters */}
       <section className="py-6 md:py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-10">
           <SearchBar onSearch={setSearchQuery} />
+
           <CategoryFilter
             categories={blogCategories}
             activeCategory={activeCategory}
@@ -172,24 +202,33 @@ export default function BlogsClient({ initialBlogs, totalCount: initialTotalCoun
             </motion.div>
           </div>
 
-          {/* Load More Button */}
-          {blogs.length < totalCount && (
-            <div className="flex justify-center mt-12">
-              <button
-                onClick={handleLoadMore}
-                disabled={loading}
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold transition-all shadow-lg hover:shadow-blue-500/30 flex items-center gap-2 disabled:opacity-50"
-              >
-                {loading ? (
-                  <>Processing...</>
-                ) : (
-                  <>Load More Articles</>
-                )}
-              </button>
-            </div>
-          )}
+          {/* Pagination */}
+          <div className="flex justify-center mt-12">
+            <Pagination
+              currentPage={page}
+              totalItems={totalCount}
+              pageSize={initialLimit}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       </section>
+
+      {/* Full Screen Modal Editor */}
+      {showEditor && (
+        <div className="fixed inset-0 z-50 bg-[#060B18]/95 backdrop-blur-sm overflow-y-auto">
+          <div className="min-h-screen px-4 py-8 flex items-center justify-center">
+            <div className="w-full max-w-5xl">
+              <SharedBlogEditor
+                user={user}
+                isModal={true}
+                onCancel={() => setShowEditor(false)}
+                onSuccess={handleBlogSuccess}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

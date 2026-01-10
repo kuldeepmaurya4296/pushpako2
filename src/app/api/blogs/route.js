@@ -1,8 +1,7 @@
 import { connectDB } from "@/lib/db/connectDB"
 import Blog from "@/lib/models/Blog"
 import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { sanitizeContent, calculateReadTime } from "@/lib/blogUtils";
 
 // GET /api/blogs - Get all blogs with optional filtering
 export async function GET(request) {
@@ -61,11 +60,14 @@ export async function GET(request) {
   }
 }
 
+import { getAuthUser } from "@/lib/getAuthUser";
+
 // POST /api/blogs - Create a new blog
 export async function POST(request) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session) {
+    const user = await getAuthUser()
+    console.log("POST /api/blogs user:", user);
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -73,17 +75,25 @@ export async function POST(request) {
     const data = await request.json()
 
     // Override author info with session data
-    data.author = session.user.name || "Anonymous"
-    data.authorId = session.user.id
+    data.author = user.name || "Anonymous"
+    data.authorId = user.id
 
     // Default fallback if not provided
     if (!data.authorId) {
       return NextResponse.json({ error: "Unable to determine author" }, { status: 400 })
     }
 
+
+
     // Generate slug if not provided
     if (!data.slug) {
       data.slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+    }
+
+    // Sanitize content and calculate read time
+    if (data.content) {
+      data.content = sanitizeContent(data.content);
+      data.readTime = calculateReadTime(data.content);
     }
 
     const blog = await Blog.create(data)
