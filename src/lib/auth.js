@@ -1,12 +1,13 @@
-import { jwtVerify } from 'jose';
+import jwt from 'jsonwebtoken';
 
+// NOT for middleware usage, only for API routes or Server Components
 export async function verifyToken(token) {
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secret');
-    const { payload } = await jwtVerify(token, secret);
-    return payload;
+    const secret = process.env.JWT_SECRET || 'fallback-secret';
+    const decoded = jwt.verify(token, secret);
+    return decoded;
   } catch (error) {
-    // console.error("Token verification failed:", error.message);
+    console.error("Token verification failed:", error.message);
     return null;
   }
 }
