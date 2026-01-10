@@ -58,6 +58,7 @@ const InvestorSchema = new mongoose.Schema(
       enum: ["active", "inactive", "exited"],
       default: "active"
     },
+    isFirstLogin: { type: Boolean, default: true },
     lastContact: String,
     nextFollowUp: String,
     notes: String,
