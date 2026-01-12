@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, TrendingUp, Users, FileText, Activity } from 'lucide-react';
 
 export default function OverviewTab() {
   const [data, setData] = useState(null);
@@ -38,63 +38,96 @@ export default function OverviewTab() {
     });
   };
 
+  const StatCard = ({ title, value, icon: Icon, color }) => (
+    <div className="bg-[#0F172A] border border-gray-800 p-6 rounded-xl shadow-lg relative overflow-hidden group hover:border-blue-500/30 transition-all">
+      <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${color}`}>
+        <Icon className="w-24 h-24" />
+      </div>
+      <div className="relative z-10">
+        <div className="flex items-center gap-3 mb-2">
+          <div className={`p-2 rounded-lg bg-gray-800 ${color} bg-opacity-10 text-opacity-100`}>
+            <Icon className={`w-5 h-5 ${color.replace('text-', 'text-')}`} />
+          </div>
+          <h3 className="text-gray-400 font-medium">{title}</h3>
+        </div>
+        <p className="text-3xl font-bold text-white mt-2">{value ? value.toLocaleString() : 0}</p>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Key Metrics */}
+    <div className="space-y-8 animate-fade-in-up">
+      {/* Key Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Team Members</h3>
-          <p className="text-3xl font-bold text-blue-400">{data.overview.totalTeam}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Blogs</h3>
-          <p className="text-3xl font-bold text-green-400">{data.overview.totalBlogs}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Users</h3>
-          <p className="text-3xl font-bold text-yellow-400">{data.overview.totalUsers}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Investors</h3>
-          <p className="text-3xl font-bold text-purple-400">{data.overview.totalInvestors}</p>
-        </div>
+        <StatCard
+          title="Total Page Views"
+          value={data.overview.totalViews}
+          icon={TrendingUp}
+          color="text-blue-500"
+        />
+        <StatCard
+          title="Total Users"
+          value={data.overview.totalUsers}
+          icon={Users}
+          color="text-yellow-500"
+        />
+        <StatCard
+          title="Published Blogs"
+          value={data.overview.totalPublishedBlogs}
+          icon={FileText}
+          color="text-green-500"
+        />
+        <StatCard
+          title="Active Investors"
+          value={data.overview.totalInvestors}
+          icon={Activity}
+          color="text-purple-500"
+        />
       </div>
 
-      {/* Recent Activities */}
-      <div className="bg-gray-800 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">Recent Activities</h2>
-        <div className="space-y-4">
-          {data.recentActivities.length > 0 ? (
-            data.recentActivities.map((activity, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 bg-gray-700 rounded-lg">
-                <div className={`w-2 h-2 rounded-full ${activity.type === 'user' ? 'bg-green-400' : 'bg-blue-400'}`}></div>
-                <div>
-                  <p className="text-sm">{activity.message}</p>
-                  <p className="text-xs text-gray-400">{formatDate(activity.date)}</p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Activities */}
+        <div className="lg:col-span-2 bg-[#0F172A] border border-gray-800 rounded-xl p-6">
+          <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-500" />
+            Recent Activities
+          </h2>
+          <div className="space-y-4">
+            {data.recentActivities.length > 0 ? (
+              data.recentActivities.map((activity, index) => (
+                <div key={index} className="flex items-start gap-4 p-4 bg-gray-800/50 rounded-lg border border-gray-800 hover:bg-gray-800 transition-colors">
+                  <div className={`mt-1 w-2 h-2 rounded-full shrink-0 ${activity.type === 'user' ? 'bg-green-400' : 'bg-blue-400'}`}></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-200">{activity.message}</p>
+                    <p className="text-xs text-gray-500 mt-1">{formatDate(activity.date)}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">No recent activities found</div>
+            )}
+          </div>
+        </div>
+
+        {/* System Status */}
+        <div className="bg-[#0F172A] border border-gray-800 rounded-xl p-6">
+          <h2 className="text-xl font-bold mb-6">System Health</h2>
+          <div className="space-y-4">
+            {[
+              { label: 'Website', status: 'Operational', color: 'bg-green-500' },
+              { label: 'API Gateway', status: 'Operational', color: 'bg-green-500' },
+              { label: 'Database', status: 'Connected', color: 'bg-green-500' },
+              { label: 'Blob Storage', status: 'Active', color: 'bg-green-500' },
+              { label: 'Auth System', status: 'Secure', color: 'bg-green-500' },
+            ].map((item, idx) => (
+              <div key={idx} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                <span className="text-sm text-gray-300">{item.label}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${item.color} animate-pulse`}></span>
+                  <span className="text-xs font-medium text-green-400">{item.status}</span>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="text-gray-400">No recent activities.</p>
-          )}
-        </div>
-      </div>
-
-      {/* System Status */}
-      <div className="bg-gray-800 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">System Status</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-            <span>Website: Operational</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-            <span>API: Operational</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-            <span>Database: Connected</span>
+            ))}
           </div>
         </div>
       </div>

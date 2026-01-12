@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, TrendingUp, ArrowUpRight } from 'lucide-react';
 
 export default function AnalyticsTab() {
   const [data, setData] = useState(null);
@@ -32,49 +32,70 @@ export default function AnalyticsTab() {
 
   if (!data) return <div className="text-red-400">Failed to load analytics</div>;
 
-  return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
+  const maxViews = Math.max(...data.traffic.topPages.map(p => p.views), 1);
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Blog Views</h3>
-          <p className="text-3xl font-bold text-blue-400">{data.overview.totalViews.toLocaleString()}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Published Blogs</h3>
-          <p className="text-3xl font-bold text-green-400">{data.overview.totalPublishedBlogs}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Users</h3>
-          <p className="text-3xl font-bold text-yellow-400">{data.overview.totalUsers}</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Investors</h3>
-          <p className="text-3xl font-bold text-purple-400">{data.overview.totalInvestors}</p>
-        </div>
+  return (
+    <div className="space-y-8 animate-fade-in-up">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Traffic Analytics</h2>
+        <span className="text-sm text-gray-400">Real-time Data</span>
       </div>
 
-      {/* Top Pages */}
-      <div className="bg-gray-800 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold mb-4">Top Performing Blogs</h3>
-        <div className="space-y-3">
-          {data.traffic.topPages.length > 0 ? (
-            data.traffic.topPages.map((page, index) => (
-              <div key={index} className="flex items-center justify-between border-b border-gray-700 pb-2 last:border-0">
-                <div className="flex flex-col">
-                  <span className="font-medium text-white">{page.title}</span>
-                  <span className="text-xs text-gray-500 truncate max-w-md">{page.page}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-green-400 font-bold">{page.views.toLocaleString()} views</span>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-400">No data available yet.</p>
-          )}
+      {/* Pages Table */}
+      <div className="bg-[#0F172A] border border-gray-800 rounded-xl overflow-hidden">
+        <div className="p-6 border-b border-gray-800 flex items-center justify-between">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-blue-500" />
+            Top Visited Pages
+          </h3>
+          <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total Views: {data.traffic.pageViews.toLocaleString()}</span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-gray-800/50 text-gray-400 text-xs uppercase font-semibold">
+              <tr>
+                <th className="px-6 py-4">Page Path</th>
+                <th className="px-6 py-4">Title / Context</th>
+                <th className="px-6 py-4 text-right">Views</th>
+                <th className="px-6 py-4 w-1/3">Traffic Distribution</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-800">
+              {data.traffic.topPages.length > 0 ? (
+                data.traffic.topPages.map((page, index) => {
+                  const percent = (page.views / maxViews) * 100;
+                  return (
+                    <tr key={index} className="hover:bg-gray-800/30 transition-colors group">
+                      <td className="px-6 py-4 font-mono text-sm text-blue-400 group-hover:text-blue-300">
+                        {page.page}
+                      </td>
+                      <td className="px-6 py-4 text-gray-300">
+                        {page.title}
+                      </td>
+                      <td className="px-6 py-4 text-right font-bold text-white">
+                        {page.views.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-blue-600 to-purple-500 rounded-full"
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
+                    No traffic data available yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

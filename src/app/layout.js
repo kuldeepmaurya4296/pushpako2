@@ -2,6 +2,7 @@ import LayoutWrapper from "@/app/LayoutWrapper"
 import "./globals.css"
 import { Toaster } from "react-hot-toast"
 import Providers from "@/components/Providers"
+import AnalyticsTracker from "@/components/AnalyticsTracker"
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://pushpako2.vercel.app'),
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className="flex flex-col min-h-screen  text-white bg-[#060B18]" suppressHydrationWarning>
         <Providers>
+          <AnalyticsTracker />
           <LayoutWrapper>
             {children}
           </LayoutWrapper>
