@@ -26,10 +26,11 @@ export default function LeaderCard({ member, index }) {
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-4 border-[#060B18] shadow-xl group-hover:scale-105 transition-transform duration-500">
                         <Image
                             src={member?.image || "/placeholder-avatar.jpg"}
-                            alt={member?.name}
+                            alt={member?.name || "Team Member"}
                             fill
                             className="object-cover"
                             sizes="96px"
+                            unoptimized // Bypass Next.js optimization to avoid upstream private/local IP errors with Vercel Blob
                         />
                     </div>
                     {/* Department Badge */}
