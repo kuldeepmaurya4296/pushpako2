@@ -23,7 +23,7 @@ export default function InvestorsTable({ investors, onView, onEdit, onDelete }) 
               <tr key={investor._id || index} className="hover:bg-gray-750">
                 <td className="px-6 py-4">
                   <div className="flex items-center">
-                    <img className="h-10 w-10 rounded-full object-cover" src={investor.profilePicture} alt={investor.name} />
+                    <img className="h-10 w-10 rounded-full object-cover" src={investor.profilePicture || '/placeholder-avatar.jpg'} alt={investor.name} />
                     <div className="ml-4">
                       <div className="text-sm font-medium text-white">{investor.name}</div>
                       <div className="text-sm text-gray-400">{investor.email}</div>

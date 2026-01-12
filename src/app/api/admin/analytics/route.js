@@ -3,6 +3,7 @@ import Blog from "@/lib/models/Blog"
 import User from "@/lib/models/User"
 import Investor from "@/lib/models/Investor"
 import Team from "@/lib/models/Team"
+import PageView from "@/lib/models/PageView"
 import { NextResponse } from "next/server"
 
 export async function GET(request) {
@@ -16,7 +17,9 @@ export async function GET(request) {
             totalTeam,
             blogStats,
             recentUsers,
-            recentBlogs
+            recentBlogs,
+            pageStats,
+            topPagesData
         ] = await Promise.all([
             User.countDocuments(),
             Investor.countDocuments(),
@@ -32,10 +35,20 @@ export async function GET(request) {
                 }
             ]),
             User.find().sort({ createdAt: -1 }).limit(5).select('name email type createdAt'),
-            Blog.find({ isPublished: true }).sort({ createdAt: -1 }).limit(5).select('title slug createdAt views')
+            Blog.find({ isPublished: true }).sort({ createdAt: -1 }).limit(5).select('title slug createdAt views'),
+            PageView.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        totalPageViews: { $sum: "$views" }
+                    }
+                }
+            ]),
+            PageView.find().sort({ views: -1 }).limit(10)
         ]);
 
         const stats = blogStats[0] || { totalViews: 0, totalPublished: 0, count: 0 };
+        const totalPageViews = pageStats[0]?.totalPageViews || 0;
 
         // 2. Format Recent Activities
         const activities = [
@@ -49,20 +62,16 @@ export async function GET(request) {
                 message: `Published Blog: ${b.title}`,
                 date: b.createdAt
             }))
-        ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+        ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
 
-        // 3. Get Top Pages (Blogs)
-        const topBlogs = await Blog.find({ isPublished: true })
-            .sort({ views: -1 })
-            .limit(5)
-            .select('title slug views');
-
-        const topPagesFormatted = topBlogs.map(b => ({
-            page: `/blogs/${b.slug}`,
-            title: b.title,
-            views: b.views
+        // 3. Format Top Pages
+        const topPagesFormatted = topPagesData.map(p => ({
+            page: p.path,
+            title: p.path === '/' ? 'Homepage' : p.path, // Simple title fallback
+            views: p.views
         }));
 
+        // Return combined data
         return NextResponse.json({
             overview: {
                 totalUsers,
@@ -70,10 +79,10 @@ export async function GET(request) {
                 totalTeam,
                 totalBlogs: stats.count,
                 totalPublishedBlogs: stats.totalPublished,
-                totalViews: stats.totalViews
+                totalViews: totalPageViews > 0 ? totalPageViews : stats.totalViews // Prefer PageView data if available
             },
             traffic: {
-                pageViews: stats.totalViews,
+                pageViews: totalPageViews,
                 topPages: topPagesFormatted
             },
             recentActivities: activities
@@ -84,3 +93,4 @@ export async function GET(request) {
         return NextResponse.json({ error: "Failed to fetch analytics" }, { status: 500 })
     }
 }
+
