@@ -44,3 +44,4 @@ next-env.d.ts
 # Documentation & Reports
 *.md
 !README.md
+!FINAL_TESTING_REPORT.md

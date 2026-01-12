@@ -53,7 +53,7 @@ const About = () => {
           >
             <div className="relative rounded-2xl overflow-hidden">
               <img
-                src={`/hero-aircraft.jpg`}
+                src={`/hero-aircraft.png`}
                 alt="PushpakO2 Aircraft"
                 className="w-full h-auto object-cover aspect-[4/3]"
               />

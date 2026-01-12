@@ -132,7 +132,7 @@ export default function SignInClientComponent() {
             <div className="hidden md:flex md:w-1/2 items-center justify-center">
                 <div className="text-center text-white h-[450px] w-2/3">
                     <Image
-                        src="/hero-aircraft.jpg"
+                        src="/hero-aircraft.png"
                         alt="Auth"
                         width={400}
                         height={400}
