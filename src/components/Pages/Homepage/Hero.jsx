@@ -34,15 +34,13 @@ export default function Hero() {
     >
       {/* Visual Background Component */}
       <div className="absolute w-4/5 h-4/5">
-        <Image
-          src={'/hero-drone-video.gif'}
+        <img
+          src="/hero-drone-video.gif"
           alt={`${companyProfile.brandName} Aviation Systems`}
-          fill
-          className="object-cover rounded-2xl shadow-2xl"
-          priority
-          unoptimized
+          className="w-full h-auto rounded-2xl shadow-2xl"
         />
       </div>
+
       {/* Background Gradient */}
       {/* <div className="absolute inset-0 -z-20 bg-gradient-to-b from-[#0f0f0f] via-[#1a1a1a] to-[#111111]" /> */}
 
