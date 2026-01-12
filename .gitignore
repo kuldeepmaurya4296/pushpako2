@@ -40,6 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Documentation
-VERCEL_BLOB_SETUP.md
-CONTACT_FORM_EMAIL_SETUP.md
+
+# Documentation & Reports
+*.md
+!README.md

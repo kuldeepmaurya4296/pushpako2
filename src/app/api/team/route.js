@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/db/connectDB"
 import Team from "@/lib/models/Team"
 import { leadershipTeam } from "@/lib/data/companyData"
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 
 // GET /api/team - Get all team members with optional filtering and fallback to hardcoded data
 export async function GET(request) {
@@ -49,6 +50,11 @@ export async function POST(request) {
     const data = await request.json()
 
     const teamMember = await Team.create(data)
+
+    // Revalidate the team page and homepage to reflect changes immediately
+    revalidatePath('/our-team');
+    revalidatePath('/');
+
     return NextResponse.json(teamMember, { status: 201 })
   } catch (error) {
     console.error(error)

@@ -4,28 +4,37 @@ import BlogDetail from '@/components/Pages/Blogs/BlogDetail';
 
 export const dynamic = 'force-dynamic';
 
+import { connectDB } from "@/lib/db/connectDB";
+import Blog from "@/lib/models/Blog";
+
 async function getBlog(id) {
   try {
-    // Try to fetch by slug first, then by ID if it's a valid ObjectId
-    let response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs/${id}`, {
-      cache: 'no-store' // Ensure fresh data
-    });
+    await connectDB();
 
-    if (!response.ok) {
-      // If not found by slug, try by ID if it's a valid ObjectId
-      if (/^[0-9a-fA-F]{24}$/.test(id)) {
-        response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs/${id}`, {
-          cache: 'no-store'
-        });
-      }
+    // Try to fetch by slug first
+    let blog = await Blog.findOne({ slug: id, isPublished: true }).lean();
 
-      if (!response.ok) {
-        return null;
-      }
+    // If not found by slug, try by ID if it's a valid ObjectId
+    if (!blog && /^[0-9a-fA-F]{24}$/.test(id)) {
+      blog = await Blog.findOne({ _id: id, isPublished: true }).lean();
     }
 
-    const data = await response.json();
-    return data;
+    if (!blog) {
+      return null;
+    }
+
+    // Deep clone to ensure all Mongoose objects (ObjectId, Date, etc.) are serialized to string
+    // This fixes the "Only plain objects can be passed to Client Components" error
+    blog = JSON.parse(JSON.stringify(blog));
+
+    // Increment view count (fire and forget to avoid blocking)
+    try {
+      await Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } });
+    } catch (err) {
+      console.error('Error incrementing views:', err);
+    }
+
+    return blog;
   } catch (error) {
     console.error('Error fetching blog:', error);
     return null;

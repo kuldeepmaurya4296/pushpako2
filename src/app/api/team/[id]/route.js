@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db/connectDB"
 import Team from "@/lib/models/Team"
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 
 // GET /api/team/[id] - Get a single team member by ID
 export async function GET(request, { params }) {
@@ -38,6 +39,10 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: "Team member not found" }, { status: 404 })
     }
 
+    // Revalidate paths
+    revalidatePath('/our-team');
+    revalidatePath('/');
+
     return NextResponse.json(teamMember)
   } catch (error) {
     console.error(error)
@@ -56,6 +61,10 @@ export async function DELETE(request, { params }) {
     if (!teamMember) {
       return NextResponse.json({ error: "Team member not found" }, { status: 404 })
     }
+
+    // Revalidate paths
+    revalidatePath('/our-team');
+    revalidatePath('/');
 
     return NextResponse.json({ message: "Team member deleted successfully" })
   } catch (error) {
