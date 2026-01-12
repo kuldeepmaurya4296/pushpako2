@@ -39,6 +39,17 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
         }
     }, [blog]);
 
+    // Auto-generate slug when title changes (only for new blogs or if slug is empty)
+    useEffect(() => {
+        if (!blog && formData.title) {
+            const generatedSlug = formData.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            setFormData(prev => ({ ...prev, slug: generatedSlug }));
+        }
+    }, [formData.title, blog]);
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev) => ({
@@ -114,7 +125,7 @@ export default function BlogEditor({ blog, onCancel, onSave }) {
 
                     {/* Slug */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300">Slug</label>
+                        <label className="text-sm font-medium text-gray-300">Slug (Auto-generated)</label>
                         <input
                             type="text"
                             name="slug"
