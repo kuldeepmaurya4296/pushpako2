@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast"
 import Providers from "@/components/Providers"
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://pushpako2.vercel.app'),
   title: "Pushpako2 | Hydrogen Electric Urban Air Mobility",
   description: "Experience Refined Innovation",
 }

@@ -23,12 +23,11 @@ async function getBlog(id) {
       return null;
     }
 
-    // Convert _id to string to avoid serialization issues
-    blog._id = blog._id.toString();
-    if (blog.authorId) blog.authorId = blog.authorId.toString();
+    // Deep clone to ensure all Mongoose objects (ObjectId, Date, etc.) are serialized to string
+    // This fixes the "Only plain objects can be passed to Client Components" error
+    blog = JSON.parse(JSON.stringify(blog));
 
-    // Increment view count (fire and forget to avoid blocking, or await if strict consistency needed)
-    // For Server Components, we should await to ensure it happens, mostly harmless for perf unless high load
+    // Increment view count (fire and forget to avoid blocking)
     try {
       await Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } });
     } catch (err) {
