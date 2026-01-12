@@ -4,28 +4,38 @@ import BlogDetail from '@/components/Pages/Blogs/BlogDetail';
 
 export const dynamic = 'force-dynamic';
 
+import { connectDB } from "@/lib/db/connectDB";
+import Blog from "@/lib/models/Blog";
+
 async function getBlog(id) {
   try {
-    // Try to fetch by slug first, then by ID if it's a valid ObjectId
-    let response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs/${id}`, {
-      cache: 'no-store' // Ensure fresh data
-    });
+    await connectDB();
 
-    if (!response.ok) {
-      // If not found by slug, try by ID if it's a valid ObjectId
-      if (/^[0-9a-fA-F]{24}$/.test(id)) {
-        response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blogs/${id}`, {
-          cache: 'no-store'
-        });
-      }
+    // Try to fetch by slug first
+    let blog = await Blog.findOne({ slug: id, isPublished: true }).lean();
 
-      if (!response.ok) {
-        return null;
-      }
+    // If not found by slug, try by ID if it's a valid ObjectId
+    if (!blog && /^[0-9a-fA-F]{24}$/.test(id)) {
+      blog = await Blog.findOne({ _id: id, isPublished: true }).lean();
     }
 
-    const data = await response.json();
-    return data;
+    if (!blog) {
+      return null;
+    }
+
+    // Convert _id to string to avoid serialization issues
+    blog._id = blog._id.toString();
+    if (blog.authorId) blog.authorId = blog.authorId.toString();
+
+    // Increment view count (fire and forget to avoid blocking, or await if strict consistency needed)
+    // For Server Components, we should await to ensure it happens, mostly harmless for perf unless high load
+    try {
+      await Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } });
+    } catch (err) {
+      console.error('Error incrementing views:', err);
+    }
+
+    return blog;
   } catch (error) {
     console.error('Error fetching blog:', error);
     return null;

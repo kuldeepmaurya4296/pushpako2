@@ -28,27 +28,37 @@ export async function POST(request) {
     }
 
     // 2. Local File System (Fallback for localhost without Blob token)
-    try {
-        console.log("Using Local Storage Fallback (No BLOB_READ_WRITE_TOKEN found)");
+    // CRITICAL: Only allow local file system usage in development environment.
+    // In production (Vercel), local files are ephemeral and will be lost.
+    if (process.env.NODE_ENV === 'development') {
+        try {
+            console.log("Using Local Storage Fallback (No BLOB_READ_WRITE_TOKEN found)");
 
-        const arrayBuffer = await request.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+            const arrayBuffer = await request.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
 
-        // Unique name to avoid conflicts locally
-        const uniqueName = `${Date.now()}-${filename}`;
-        const uploadsDir = join(process.cwd(), 'public', 'uploads');
+            // Unique name to avoid conflicts locally
+            const uniqueName = `${Date.now()}-${filename}`;
+            const uploadsDir = join(process.cwd(), 'public', 'uploads');
 
-        await mkdir(uploadsDir, { recursive: true });
-        const path = join(uploadsDir, uniqueName);
+            await mkdir(uploadsDir, { recursive: true });
+            const path = join(uploadsDir, uniqueName);
 
-        await writeFile(path, buffer);
+            await writeFile(path, buffer);
 
+            return NextResponse.json({
+                url: `/uploads/${uniqueName}`,
+                pathname: uniqueName
+            });
+        } catch (error) {
+            console.error("Local upload failed", error);
+            return NextResponse.json({ error: "Local upload failed: " + error.message }, { status: 500 });
+        }
+    } else {
+        // In Production, if Blob token is missing, we must fail.
+        console.error("CRITICAL: BLOB_READ_WRITE_TOKEN is missing in production. Cannot upload files.");
         return NextResponse.json({
-            url: `/uploads/${uniqueName}`,
-            pathname: uniqueName
-        });
-    } catch (error) {
-        console.error("Local upload failed", error);
-        return NextResponse.json({ error: "Local upload failed: " + error.message }, { status: 500 });
+            error: "Server Configuration Error: File storage is not configured. Please add BLOB_READ_WRITE_TOKEN."
+        }, { status: 500 });
     }
 }
