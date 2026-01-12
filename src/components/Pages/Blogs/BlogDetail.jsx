@@ -158,7 +158,21 @@ export default function BlogDetail({ blog }) {
         </div>
 
         {/* Content Section - Render HTML Safely */}
-        <div className="max-w-3xl mx-auto prose prose-invert prose-lg prose-blue">
+        <div className="max-w-3xl mx-auto 
+            [&_p]:text-gray-300 [&_p]:leading-relaxed [&_p]:mb-6 [&_p]:text-lg
+            [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:text-white [&_h1]:mt-10 [&_h1]:mb-6
+            [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-gray-100 [&_h2]:mt-10 [&_h2]:mb-6
+            [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-gray-200 [&_h3]:mt-8 [&_h3]:mb-4
+            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-6 [&_ul]:text-gray-300 [&_ul]:space-y-2
+            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-6 [&_ol]:text-gray-300 [&_ol]:space-y-2
+            [&_li]:pl-1
+            [&_a]:text-blue-400 [&_a]:underline hover:[&_a]:text-blue-300
+            [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:bg-blue-500/10 [&_blockquote]:py-2 [&_blockquote]:px-6 [&_blockquote]:rounded-r-lg [&_blockquote]:italic [&_blockquote]:text-gray-200 [&_blockquote]:my-8
+            [&_img]:rounded-2xl [&_img]:shadow-xl [&_img]:my-8 [&_img]:border [&_img]:border-gray-800 [&_img]:w-full
+            [&_code]:text-blue-300 [&_code]:bg-blue-900/30 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:font-mono [&_code]:text-sm
+            [&_pre]:bg-[#0F172A] [&_pre]:p-4 [&_pre]:rounded-xl [&_pre]:overflow-x-auto [&_pre]:mb-6 [&_pre]:border [&_pre]:border-gray-800
+            [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:shadow-lg [&_iframe]:mb-8
+        ">
           <div dangerouslySetInnerHTML={{ __html: blog.content }} />
         </div>
 
