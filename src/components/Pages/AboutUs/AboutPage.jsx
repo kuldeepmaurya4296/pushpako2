@@ -371,7 +371,7 @@ export default function AboutPage() {
                             className="relative rounded-2xl overflow-hidden border border-border"
                         >
                             <Image
-                                src="/hero-aircraft.jpg"
+                                src="/hero-aircraft.png"
                                 alt="PushpakO2 Technology"
                                 width={800}
                                 height={600}
