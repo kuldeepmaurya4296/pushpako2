@@ -3,10 +3,11 @@ import Investor from "@/lib/models/Investor"
 import { NextResponse } from "next/server"
 
 // GET /api/investors/[id] - Get a single investor by ID
+// GET /api/investors/[id] - Get a single investor by ID
 export async function GET(request, { params }) {
   try {
     await connectDB()
-    const { id } = params
+    const { id } = await params
 
     const investor = await Investor.findById(id)
 
@@ -51,7 +52,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await connectDB()
-    const { id } = params
+    const { id } = await params
 
     const investor = await Investor.findByIdAndDelete(id)
 
