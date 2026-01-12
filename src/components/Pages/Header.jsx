@@ -8,22 +8,22 @@ import Link from "next/link"
 import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
 
-const navItems = [
-  { label: "Home", href: "/" },
-  { label: "Technology", href: "/technologies" },
-  { label: "About US", href: "/about-us" },
-  { label: "Investors", href: "/dashboards/investors/1", badge: "Series A" },
-  { label: "Contact Us", href: "/contact-us" },
-  { label: "Services", href: "/services" },
-  { label: "Our Team", href: "/our-team" },
-  { label: "Blogs", href: "/blogs" },
-]
-
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef(null)
   const { data: session, status } = useSession()
+  console.log(session, "session")
+  const navItems = [
+    { label: "Home", href: "/" },
+    { label: "Technology", href: "/technologies" },
+    { label: "About US", href: "/about-us" },
+    { label: "Investors", href: session ? `/dashboards/investors/${session.user.id}` : "/sign-in", badge: "Series A" },
+    { label: "Contact Us", href: "/contact-us" },
+    { label: "Services", href: "/services" },
+    { label: "Our Team", href: "/our-team" },
+    { label: "Blogs", href: "/blogs" },
+  ]
 
   // Close menu on scroll
   useEffect(() => {
