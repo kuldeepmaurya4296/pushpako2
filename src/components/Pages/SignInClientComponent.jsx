@@ -16,7 +16,7 @@ export default function SignInClientComponent() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { data: session } = useSession();
-
+    console.log(session, "session")
     useEffect(() => {
         const syncAndRedirect = async () => {
             if (session?.user) {
@@ -68,25 +68,18 @@ export default function SignInClientComponent() {
         if (isSignIn) {
             // Sign In
             try {
-                const res = await fetch('/api/auth/sign-in', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: formData.email,
-                        password: formData.password,
-                    }),
+                const result = await signIn('credentials', {
+                    redirect: false,
+                    email: formData.email,
+                    password: formData.password,
                 });
-                const data = await res.json();
-                if (res.ok) {
-                    toast.success('Signed in successfully');
-                    // Redirect based on role
-                    if (data.user.role === 'admin') {
-                        router.push('/dashboards/admin');
-                    } else {
-                        router.push(`/dashboards/investors/${data.user.id}`);
-                    }
+
+                if (result.error) {
+                    toast.error(result.error);
                 } else {
-                    toast.error(data.error);
+                    toast.success('Signed in successfully');
+                    // The useEffect hook will handle the redirect once the session updates
+                    router.refresh(); 
                 }
             } catch (error) {
                 toast.error('Something went wrong');

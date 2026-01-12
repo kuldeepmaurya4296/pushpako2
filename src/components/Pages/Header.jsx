@@ -13,12 +13,12 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef(null)
   const { data: session, status } = useSession()
-
+  console.log(session, "session")
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Technology", href: "/technologies" },
     { label: "About US", href: "/about-us" },
-    { label: "Investors", href: session?.user?.id ? `/dashboards/investors/${session.user.id}` : "/sign-in", badge: "Series A" },
+    { label: "Investors", href: session ? `/dashboards/investors/${session.user.id}` : "/sign-in", badge: "Series A" },
     { label: "Contact Us", href: "/contact-us" },
     { label: "Services", href: "/services" },
     { label: "Our Team", href: "/our-team" },
