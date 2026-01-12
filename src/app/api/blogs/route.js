@@ -43,6 +43,7 @@ export async function GET(request) {
 
     const blogs = await Blog.find(query)
       .sort({ createdAt: -1 })
+      .select('-content -comments') // Optimization: Exclude heavy fields
       .skip(skip)
       .limit(limit || 0)
 
