@@ -16,6 +16,7 @@ export default async function page() {
     const [blogsResult, totalResult] = await Promise.all([
       Blog.find({ isPublished: true })
         .sort({ createdAt: -1 })
+        .select('-content -comments') // Exclude heavy fields for list view
         .limit(limit)
         .lean(),
       Blog.countDocuments({ isPublished: true })

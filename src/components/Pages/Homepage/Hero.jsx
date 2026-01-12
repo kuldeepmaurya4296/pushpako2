@@ -1,51 +1,26 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowRight, TrendingUp, ChevronDown } from "lucide-react"
+import { ArrowRight, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Squares } from "../../ui/square"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
 import { companyProfile } from "@/lib/data/companyData"
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 
 export default function Hero() {
   const router = useRouter()
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userRole, setUserRole] = useState(null)
-  const [userId, setUserId] = useState(null)
-
-  useEffect(() => {
-    // Check if user is authenticated by checking for auth-token cookie
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/auth/check-session', {
-          method: 'GET',
-          credentials: 'include'
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          setIsAuthenticated(true)
-          setUserRole(data.role)
-          setUserId(data.id)
-        }
-      } catch (error) {
-        // User is not authenticated
-        setIsAuthenticated(false)
-      }
-    }
-
-    checkAuth()
-  }, [])
+  const { user, loading } = useCurrentUser()
 
   const handleInvestorPortalClick = () => {
-    if (isAuthenticated) {
-      if (userRole === 'admin') {
+    if (loading) return;
+
+    if (user) {
+      if (user.role === 'admin') {
         router.push('/dashboards/admin')
       } else {
-        router.push(`/dashboards/investors/${userId}`)
+        router.push(`/dashboards/investors/${user.id}`)
       }
     } else {
       router.push('/sign-in')
@@ -57,18 +32,16 @@ export default function Hero() {
       id="home"
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden text-white bg-[#060B18]"
     >
-      {/* Squares Component */}
+      {/* Visual Background Component */}
       <div className="absolute w-4/5 h-4/5">
-        {/* <Squares /> */}
-        {/* <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full scale-75" /> */}
-
-        <img
+        <Image
           src={'/hero-drone-video.gif'}
           alt={`${companyProfile.brandName} Aviation Systems`}
-          className="w-full h-auto rounded-2xl shadow-2xl"
+          fill
+          className="object-cover rounded-2xl shadow-2xl"
+          priority
+          unoptimized
         />
-        {/* <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/50 via-background/50 to-transparent rounded-b-2xl" /> */}
-
       </div>
       {/* Background Gradient */}
       {/* <div className="absolute inset-0 -z-20 bg-gradient-to-b from-[#0f0f0f] via-[#1a1a1a] to-[#111111]" /> */}

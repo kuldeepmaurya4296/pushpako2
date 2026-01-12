@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Upload, X, Loader2, Link, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -16,6 +16,24 @@ export default function ImageUpload({
   const [previewUrl, setPreviewUrl] = useState(value || '');
   const [mode, setMode] = useState(value ? 'url' : 'upload'); // 'upload' or 'url'
   const [urlInput, setUrlInput] = useState(value || '');
+  // Sync with prop value
+  useEffect(() => {
+    if (value) {
+      setPreviewUrl(value);
+      setUrlInput(value);
+      // Auto-switch to URL mode if it looks like a URL and we are not uploading
+      if (value.startsWith('http') || value.startsWith('/')) {
+        // Keep current mode if user is actively uploading, but initial load should show preview
+        if (!isUploading) {
+          // Optional: You could switch to URL mode, but keeping Preview is enough
+        }
+      }
+    } else {
+      setPreviewUrl('');
+      setUrlInput('');
+    }
+  }, [value, isUploading]);
+
   const fileInputRef = useRef(null);
 
   const handleFileSelect = async (event) => {

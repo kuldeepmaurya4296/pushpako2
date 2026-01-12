@@ -27,7 +27,7 @@ export async function POST(req) {
     // Send email
     await transporter.sendMail({
       from: `"Pushpak O2 Contact" <${process.env.EMAIL_USER}>`,
-      to: "kuldeepmaurya4296@gmail.com",
+      to: "connect@pushpako2.com",
       subject: `New Contact Message: ${subject || "No Subject"}`,
       html: `
         <h3>New Contact Form Submission</h3>

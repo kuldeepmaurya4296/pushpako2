@@ -1,27 +1,62 @@
-import { mockFleet } from '@/lib/mockFleet';
-import { mockUsers } from '@/lib/mockUsers';
-import { mockInvestors } from '@/lib/mockInvestors';
+import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 
 export default function OverviewTab() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await fetch('/api/admin/analytics');
+        if (res.ok) {
+          const json = await res.json();
+          setData(json);
+        }
+      } catch (error) {
+        console.error("Failed to fetch analytics:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  if (!data) return <div className="text-red-400">Failed to load overview</div>;
+
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Total Aircraft</h3>
-          <p className="text-3xl font-bold text-blue-400">{mockFleet.length}</p>
+          <h3 className="text-xl font-semibold mb-2">Total Team Members</h3>
+          <p className="text-3xl font-bold text-blue-400">{data.overview.totalTeam}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Active Aircraft</h3>
-          <p className="text-3xl font-bold text-green-400">{mockFleet.filter(f => f.status === 'active').length}</p>
+          <h3 className="text-xl font-semibold mb-2">Total Blogs</h3>
+          <p className="text-3xl font-bold text-green-400">{data.overview.totalBlogs}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Total Users</h3>
-          <p className="text-3xl font-bold text-yellow-400">{mockUsers.length}</p>
+          <p className="text-3xl font-bold text-yellow-400">{data.overview.totalUsers}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Total Investors</h3>
-          <p className="text-3xl font-bold text-purple-400">{mockInvestors.length}</p>
+          <p className="text-3xl font-bold text-purple-400">{data.overview.totalInvestors}</p>
         </div>
       </div>
 
@@ -29,27 +64,19 @@ export default function OverviewTab() {
       <div className="bg-gray-800 p-6 rounded-lg">
         <h2 className="text-2xl font-bold mb-4">Recent Activities</h2>
         <div className="space-y-4">
-          <div className="flex items-center gap-4 p-3 bg-gray-700 rounded-lg">
-            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            <div>
-              <p className="text-sm">New user registration: {mockUsers[mockUsers.length - 1]?.name}</p>
-              <p className="text-xs text-gray-400">2 hours ago</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 p-3 bg-gray-700 rounded-lg">
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <div>
-              <p className="text-sm">Fleet maintenance completed for {mockFleet[0]?.name}</p>
-              <p className="text-xs text-gray-400">1 day ago</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 p-3 bg-gray-700 rounded-lg">
-            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-            <div>
-              <p className="text-sm">New blog post published</p>
-              <p className="text-xs text-gray-400">3 days ago</p>
-            </div>
-          </div>
+          {data.recentActivities.length > 0 ? (
+            data.recentActivities.map((activity, index) => (
+              <div key={index} className="flex items-center gap-4 p-3 bg-gray-700 rounded-lg">
+                <div className={`w-2 h-2 rounded-full ${activity.type === 'user' ? 'bg-green-400' : 'bg-blue-400'}`}></div>
+                <div>
+                  <p className="text-sm">{activity.message}</p>
+                  <p className="text-xs text-gray-400">{formatDate(activity.date)}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-400">No recent activities.</p>
+          )}
         </div>
       </div>
 
@@ -66,8 +93,8 @@ export default function OverviewTab() {
             <span>API: Operational</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-            <span>Maintenance Due: {mockFleet.filter(f => new Date(f.nextMaintenance) <= new Date()).length} aircraft</span>
+            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+            <span>Database: Connected</span>
           </div>
         </div>
       </div>
