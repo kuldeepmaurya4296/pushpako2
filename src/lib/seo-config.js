@@ -10,6 +10,7 @@ export const SEO_CONFIG = {
         // Brand & Typos (Critical for rank capture)
         "PushpakO2", "Pushpak O2", "pushpako2", "Pushpak O2 Aerospace", "Pushpak O2 Aviation",
         "pushpak02", "pushpako", "pushpak o two", "Pushpak O2 India",
+        "Pushpa 2", "Push Pak 2", "Pushapk P2", "Pushapk O2", "Pushpak 2", "Pushpak O2 System", "pushpa2",
 
         // Local - Bhopal
         "PushpakO2 Bhopal", "Pushpak O2 Bhopal", "pushpako2 near me", "pushpak in bhopal",
@@ -25,7 +26,16 @@ export const SEO_CONFIG = {
     authors: [
         { name: "PushpakO2 Team", url: "https://pushpako2.com/our-team" },
         { name: "Aneerudh Kumar", url: "https://pushpako2.com/our-team" },
-        { name: "Aditya Shrivastava", url: "https://pushpako2.com/our-team" }
+        { name: "Aditya Shrivastava", url: "https://pushpako2.com/our-team" },
+        { name: "Kuldeep Maurya", url: "https://pushpako2.com/our-team" },
+        { name: "Shantanu dubey", url: "https://pushpako2.com/our-team" },
+        { name: "Abhinav Pavithran", url: "https://pushpako2.com/our-team" },
+        { name: "Navneet Kaur Saini", url: "https://pushpako2.com/our-team" },
+        { name: "Sahil Rai", url: "https://pushpako2.com/our-team" },
+        { name: "Shiddhant shaw", url: "https://pushpako2.com/our-team" },
+        { name: "Front End Developer", url: "https://pushpako2.com/our-team" },
+        { name: "Back End Developer", url: "https://pushpako2.com/our-team" },
+        { name: "Ai developer", url: "https://pushpako2.com/our-team" }
     ],
     social: {
         twitter: "https://twitter.com/pushpako2", // Update if real handle is known
