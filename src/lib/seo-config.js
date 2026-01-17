@@ -4,24 +4,102 @@ export const SEO_CONFIG = {
         default: "PushpakO2 | Indian Aerospace & Advanced Engineering Authority",
         template: "%s | PushpakO2 - Indigenous Aviation Innovation"
     },
-    description: "PushpakO2 is India's premier indigenous aerospace company in Bhopal, specializing in advanced aviation platforms, intelligent aerial systems, and unmanned drones. We pioneer self-reliant, AI-enabled aviation technologies.",
-    siteUrl: process.env.NEXT_PUBLIC_BASE_URL || "https://pushpako2.com",
+    description: "PushpakO2 is India's premier indigenous aerospace company based in Bhopal, MP. We specialize in advanced aviation platforms, intelligent aerial systems (UAS/UAV), and unmanned drones. Pioneering self-reliant, AI-enabled aviation technologies for mapping, surveillance, agriculture, and defense applications.",
+    siteUrl: process.env.NEXT_PUBLIC_BASE_URL || "https://pushpako2.com" || "https://www.pushpako2.com",
     keywords: [
-        // Brand & Typos (Critical for rank capture)
+        // ===== BRAND NAME VARIATIONS & TYPOS (Critical for Search Discovery) =====
+        // Exact & Official
         "PushpakO2", "Pushpak O2", "pushpako2", "Pushpak O2 Aerospace", "Pushpak O2 Aviation",
-        "pushpak02", "pushpako", "pushpak o two", "Pushpak O2 India",
-        "Pushpa 2", "Push Pak 2", "Pushapk P2", "Pushapk O2", "Pushpak 2", "Pushpak O2 System", "pushpa2",
+        "Pushpak O2 India", "Pushpak O2 System", "PushpakO2 Company", "PushpakO2 Official",
 
-        // Local - Bhopal
+        // Common Typos & Misspellings
+        "pushpk o2", "push pak o2", "pushpako 2", "pushpak o2", "pushpak02", "pushpako",
+        "pushpak o two", "pushpak oxygen", "pushpa ko2", "pushpak 02", "pushpak o 2",
+        "Pushpa 2", "Push Pak 2", "Pushapk P2", "Pushapk O2", "Pushpak 2",
+        "pushpa2", "pushapko2", "pushpaka2", "puspako2", "pushpakoh2", "pushpaako2",
+        "push pak", "pushpack o2", "pushpac o2", "pushpack", "puspak o2", "pushpaak o2",
+        "pushpak oxygen 2", "pushpak o-2", "pushpak_o2", "pushpak.o2", "pushpako-2",
+        "pushpak oo2", "pushapak o2", "pushpaak", "puspako", "pushpakO2",
+        "pushpakkO2", "pushpakko2", "pushpaak02", "pushpaako", "puspak02",
+
+        // ===== LOCATION-BASED KEYWORDS (Local SEO) =====
+        // Bhopal Specific
         "PushpakO2 Bhopal", "Pushpak O2 Bhopal", "pushpako2 near me", "pushpak in bhopal",
-        "aerospace company in bhopal", "aviation startup in bhopal", "innovation in bhopal", "inovation in bhopal",
-        // Industry & Authority
+        "pushpako2 bhopal madhya pradesh", "pushpak o2 mp", "pushpak o2 bagsewaniya",
+        "aerospace company in bhopal", "aviation startup in bhopal", "drone company bhopal",
+        "aerospace bhopal", "aviation company bhopal", "UAV company bhopal",
+        "innovation in bhopal", "inovation in bhopal", "tech startup bhopal",
+        "bhopal aerospace", "bhopal aviation", "bhopal drone manufacturer",
+
+        // Regional & National
+        "aerospace company madhya pradesh", "aviation startup mp", "indian aerospace startup",
+        "made in india aerospace", "indigenous aerospace india", "atmanirbhar aerospace",
+        "aerospace company near me", "drone manufacturer near me", "UAV company near me",
+
+        // ===== INDUSTRY & TECHNOLOGY KEYWORDS =====
+        // Core Industry
         "Indian aerospace company", "advanced engineering company India", "indigenous aviation platforms",
-        "intelligent aerial systems", "unmanned aerial systems India", "UAS India", "fixed wing drone", "VTOL aircraft India", "in-house aerospace development",
+        "intelligent aerial systems", "unmanned aerial systems India", "UAS India",
+        "fixed wing drone", "VTOL aircraft India", "in-house aerospace development",
         "aerospace IP ownership", "aviation system integration", "next-generation aviation",
-        "AI-enabled aviation systems", "advanced avionics & propulsion", "aerial intelligence systems",
-        "sustainable aviation solutions", "mission-ready aerial platforms", "environmental monitoring drones",
-        "surveillance and smart infrastructure systems"
+
+        // AI & Advanced Tech
+        "AI-enabled aviation systems", "AI drone technology", "machine learning aviation",
+        "advanced avionics & propulsion", "aerial intelligence systems", "autonomous aircraft",
+        "intelligent drone systems", "AI powered UAV", "smart aviation technology",
+
+        // Product Categories
+        "sustainable aviation solutions", "mission-ready aerial platforms",
+        "environmental monitoring drones", "surveillance drones india",
+        "smart infrastructure systems", "agricultural drones india",
+        "mapping and survey drones", "inspection drones", "delivery drones india",
+
+        // ===== LONG-TAIL & NATURAL LANGUAGE QUERIES =====
+        // Question-based
+        "best aerospace company in bhopal", "top drone manufacturer india",
+        "where to buy drones in bhopal", "indian made drones for sale",
+        "aerospace engineering companies india", "drone technology companies india",
+        "how to buy commercial drones india", "indigenous drone manufacturers",
+
+        // Commercial Intent
+        "buy drones india", "commercial drones for sale", "enterprise drone solutions",
+        "drone services india", "UAV rental india", "drone manufacturers list india",
+        "aerospace products india", "aviation equipment india", "drone price india",
+
+        // ===== SPECIFIC USE CASES =====
+        "defence drones india", "military UAV", "surveillance systems",
+        "border surveillance drones", "security drones", "patrol drones",
+        "mapping drones", "survey drones", "photogrammetry drones",
+        "agriculture drones", "farming drones india", "crop monitoring drones",
+        "infrastructure inspection", "power line inspection drone", "pipeline inspection UAV",
+        "disaster management drones", "emergency response UAV", "search and rescue drones",
+
+        // ===== COMPETITIVE & COMPARATIVE =====
+        "best drone company india", "top aerospace startups india",
+        "indian drone companies list", "made in india drones",
+        "atmanirbhar drone", "indigenous UAV", "swadeshi aerospace",
+        "indian alternative to foreign drones", "indigenous aircraft manufacturer",
+
+        // ===== TECHNICAL SPECIFICATIONS =====
+        "fixed wing UAV manufacturer", "multi-rotor drone", "hybrid VTOL",
+        "long endurance drone", "heavy payload UAV", "beyond visual line of sight drone",
+        "BVLOS drone india", "autonomous flight systems", "drone flight controller",
+        "aerospace grade components", "aviation certified systems",
+
+        // ===== BRAND ASSOCIATIONS =====
+        "startup india aerospace", "make in india aviation", "digital india aerospace",
+        "atmanirbhar bharat drone", "vocal for local aerospace", "indian innovation aerospace",
+        "next generation indian aviation", "future of indian aerospace",
+
+        // ===== PARTNERSHIP & BUSINESS =====
+        "aerospace partnership india", "drone manufacturer partnership",
+        "UAV technology collaboration", "aerospace OEM india", "drone white label",
+        "aerospace consulting india", "aviation technology consultant",
+
+        // ===== RESEARCH & DEVELOPMENT =====
+        "aerospace research india", "aviation R&D", "drone technology research",
+        "aerospace innovation center", "UAV development india", "aviation prototyping",
+        "aerospace engineering solutions", "custom drone development"
     ],
     authors: [
         { name: "PushpakO2 Team", url: "https://pushpako2.com/our-team" },

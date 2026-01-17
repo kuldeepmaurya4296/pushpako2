@@ -4,9 +4,15 @@ import ServicesClient from "@/components/Pages/Services/Index";
 import { generateMetadata, generateSchema } from "@/lib/seo-config";
 
 export const metadata = generateMetadata({
-  title: "Aviation & Aerospace Services | PushpakO2",
-  description: "Explore PushpakO2's specialized services in Aviation Platform Design, Intelligent Aerial Systems, Unmanned Systems (UAS), and Environmental Monitoring Solutions.",
-  keywords: ["Aviation Platform Design", "Intelligent Aerial Systems", "Unmanned & Autonomous Systems", "Environmental Monitoring Drones", "Advanced Mobility"],
+  title: "Aviation & Aerospace Services | Drone Solutions | PushpakO2",
+  description: "PushpakO2 offers specialized aerospace services: UAV/Drone systems, intelligent aerial platforms, surveillance solutions, agricultural drones, mapping & survey, infrastructure inspection, and environmental monitoring across India.",
+  keywords: [
+    "drone services india", "UAV services", "aerial survey", "drone surveillance",
+    "Aviation Platform Design", "Intelligent Aerial Systems",
+    "Unmanned & Autonomous Systems", "Environmental Monitoring Drones",
+    "Advanced Mobility", "agricultural drones", "mapping drones",
+    "inspection drones", "commercial drone solutions"
+  ],
   path: "/services"
 });
 

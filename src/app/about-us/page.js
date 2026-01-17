@@ -3,9 +3,14 @@ import AboutUS from "@/components/Pages/AboutUs/Index";
 import { generateMetadata, generateSchema } from "@/lib/seo-config";
 
 export const metadata = generateMetadata({
-  title: "About Us | PushpakO2 – 100% Indigenous Aviation & Aerospace Innovator",
-  description: "PushpakO2 is an Indian aerospace and advanced engineering company committed to self-reliant in-house development of aviation platforms. We envision zero-dependency global aviation innovation from India.",
-  keywords: ["indigenous aviation platforms", "self-reliant Indian aerospace", "global aviation innovator from India", "PushpakO2 leadership", "Make in India Aerospace"],
+  title: "About PushpakO2 | Indigenous Aerospace Company Bhopal, India",
+  description: "PushpakO2 is a 100% indigenous Indian aerospace and advanced engineering company based in Bhopal, MP. We develop self-reliant aviation platforms, intelligent aerial systems, and unmanned drones for India and the world.",
+  keywords: [
+    "about pushpako2", "pushpak o2 company", "aerospace company bhopal",
+    "indigenous aviation platforms", "self-reliant Indian aerospace",
+    "global aviation innovator from India", "PushpakO2 leadership",
+    "Make in India Aerospace", "atmanirbhar aerospace", "indian drone company"
+  ],
   path: "/about-us"
 });
 

@@ -6,9 +6,14 @@ import { leadershipTeam } from "@/lib/data/companyData";
 import { generateMetadata, generateSchema } from "@/lib/seo-config";
 
 export const metadata = generateMetadata({
-  title: "PushpakO2 | Indian Aerospace & Aviation Innovation",
-  description: "PushpakO2 is an Indian aerospace leader in indigenous aviation platforms, intelligent aerial systems, and advanced engineering. Driving innovation in Bhopal and across India.",
-  keywords: ["Indian Aerospace", "Indigenous Aviation", "Autonomous Drones India", "Aerial Intelligence"],
+  title: "PushpakO2 | Indian Aerospace & Aviation Innovation | Bhopal",
+  description: "PushpakO2 is India's premier indigenous aerospace company in Bhopal. Leading manufacturer of intelligent aerial systems, unmanned drones, UAV/UAS platforms. AI-enabled aviation technology for surveillance, agriculture, mapping & defense.",
+  keywords: [
+    "PushpakO2", "Pushpak O2", "pushpako2 bhopal", "pushpk o2",
+    "Indian Aerospace", "Indigenous Aviation", "Autonomous Drones India",
+    "Aerial Intelligence", "aerospace company bhopal", "drone manufacturer india",
+    "UAV india", "UAS systems", "made in india drones"
+  ],
   path: "/"
 });
 
