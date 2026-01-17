@@ -221,7 +221,7 @@ export default function Footer() {
         {/* BOTTOM BAR */}
         <div className="py-1 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-300">
-            © 2025 Pushpak O2. All rights reserved.
+            © 2025 PushpakO2. All rights reserved.
           </p>
 
           <div className="flex gap-3">

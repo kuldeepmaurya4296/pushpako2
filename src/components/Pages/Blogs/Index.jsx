@@ -119,7 +119,7 @@ export default function BlogsClient({ initialBlogs, totalCount: initialTotalCoun
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            Stay updated with the latest insights, innovations, and developments in hydrogen-powered aviation and urban air mobility.
+            Insights from PushpakO2: The future of indigenous Indian aerospace, intelligent aerial systems, and advanced engineering from Bhopal to the world.
           </motion.p>
         </div>
       </motion.section>

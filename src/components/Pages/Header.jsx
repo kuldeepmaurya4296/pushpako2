@@ -65,7 +65,7 @@ export default function Header() {
 
                 <Image
                   src="/pushpako2.png"
-                  alt="logo"
+                  alt="PushpakO2 (Pushpak O2) Logo"
                   fill
                   className="object-contain relative z-10"
                   size="40px"

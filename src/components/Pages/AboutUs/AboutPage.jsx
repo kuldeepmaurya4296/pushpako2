@@ -136,7 +136,7 @@ export default function AboutPage() {
                         <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6">
                             About <span className="text-[#07C5EB]">{companyProfile.brandName}</span>
                         </h2>
-                        <p className="text-gray-300 leading-relaxed text-lg">
+                        <p className="text-gray-300 leading-relaxed text-lg mb-4">
                             {companyProfile.about}
                         </p>
                     </motion.div>

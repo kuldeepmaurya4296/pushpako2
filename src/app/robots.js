@@ -1,5 +1,5 @@
 export default function robots() {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pushpako2.vercel.app';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pushpako2.com';
 
     return {
         rules: {

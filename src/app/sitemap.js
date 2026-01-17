@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/db/connectDB";
 import Blog from "@/lib/models/Blog";
 
 export default async function sitemap() {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pushpako2.vercel.app';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pushpako2.com';
 
     // Static routes
     const routes = [
