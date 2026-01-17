@@ -16,13 +16,13 @@ export default function Header() {
   console.log(session, "session")
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "Technology", href: "/technologies" },
-    { label: "About US", href: "/about-us" },
-    { label: "Investors", href: session ? `/dashboards/investors/${session.user.id}` : "/sign-in", badge: "Series A" },
-    { label: "Contact Us", href: "/contact-us" },
+    { label: "About Us", href: "/about-us" },
     { label: "Services", href: "/services" },
+    { label: "Technology", href: "/technologies" },
     { label: "Our Team", href: "/our-team" },
     { label: "Blogs", href: "/blogs" },
+    { label: "Investors", href: session ? `/dashboards/investors/${session.user.id}` : "/sign-in", badge: "Series A" },
+    { label: "Contact Us", href: "/contact-us" },
   ]
 
   // Close menu on scroll
